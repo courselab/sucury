@@ -63,29 +63,29 @@ game_on = 1
 
 def center_prompt(title, subtitle):
 
-   # Show title and subtitle.
+    # Show title and subtitle.
 
-   center_title = BIG_FONT.render(title, True, MESSAGE_COLOR)
-   center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
-   arena.blit(center_title, center_title_rect)
+    center_title = BIG_FONT.render(title, True, MESSAGE_COLOR)
+    center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
+    arena.blit(center_title, center_title_rect)
 
-   center_subtitle = SMALL_FONT.render(subtitle, True, MESSAGE_COLOR)
-   center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
-   arena.blit(center_subtitle, center_subtitle_rect)
+    center_subtitle = SMALL_FONT.render(subtitle, True, MESSAGE_COLOR)
+    center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
+    arena.blit(center_subtitle, center_subtitle_rect)
 
-   pygame.display.update()
+    pygame.display.update()
 
    # Wait for a keypres or a game quit event.
 
-   while ( event := pygame.event.wait() ):
-      if event.type == pygame.KEYDOWN:
-         break;
-      if event.type == pygame.QUIT:
-         pygame.quit()
-         sys.exit()
-   if event.key == pygame.K_q:          # 'Q' quits game
-      pygame.quit()
-      sys.exit()
+    while ( event := pygame.event.wait() ):
+        if event.type == pygame.KEYDOWN:
+            break;
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    if event.key == pygame.K_q:          # 'Q' quits game
+        pygame.quit()
+        sys.exit()
 
 
 ##
@@ -121,12 +121,12 @@ class Snake:
 
         # Check for border crash.
         if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
-           self.alive = False
+            self.alive = False
 
         # Check for self-bite.
         for square in self.tail:
-           if self.head.x == square.x and self.head.y == square.y:
-              self.alive = False
+            if self.head.x == square.x and self.head.y == square.y:
+                self.alive = False
 
         # In the event of death, reset the game arena.
         if not self.alive:
@@ -218,28 +218,28 @@ while True:
     for event in pygame.event.get():           # Wait for events
 
        # App terminated
-       if event.type == pygame.QUIT:
-          pygame.quit()
-          sys.exit()
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
 
           # Key pressed
-          if event.type == pygame.KEYDOWN:
-             if event.key == pygame.K_DOWN:    # Down arrow:  move down
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_DOWN:    # Down arrow:  move down
                 snake.ymov = 1
                 snake.xmov = 0
-             elif event.key == pygame.K_UP:    # Up arrow:    move up
+            elif event.key == pygame.K_UP:    # Up arrow:    move up
                 snake.ymov = -1
                 snake.xmov = 0
-             elif event.key == pygame.K_RIGHT: # Right arrow: move right
+            elif event.key == pygame.K_RIGHT: # Right arrow: move right
                 snake.ymov = 0
                 snake.xmov = 1
-             elif event.key == pygame.K_LEFT:  # Left arrow:  move left
+            elif event.key == pygame.K_LEFT:  # Left arrow:  move left
                 snake.ymov = 0
                 snake.xmov = -1
-             elif event.key == pygame.K_q:     # Q         : quit game
+            elif event.key == pygame.K_q:     # Q         : quit game
                 pygame.quit()
                 sys.exit()
-             elif event.key == pygame.K_p:     # S         : pause game
+            elif event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
 
     ## Update the game
