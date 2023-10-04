@@ -31,29 +31,80 @@
  
  Submit your support branch and mark it as a pull/merge request.
  
- ### Commit types
- 
- Select the appropriate type.
- 
- - fix:   fix a bug
- - feat:  add new feature
- - build: changes affecting the build 
- - perf:  tidy code (other than the above) and repository
- - doc:   modify internal or external documentation
- - test:  add or modify tests
- - tmp:   a temporary branch for some other purpose (not PR/MR)
+ ### Commit messges
 
- Examples
+ When writing a commit message, use the following template --- which is 
+ furhter described in [3]
+
+ ```
+ <type>[optional scope]: <short description of what the commit does>
+
+ [optional body with further deails]
+
+ [optional footers]
+
+ ```
+ where `type` is one of the following conventional commit types:
+
+ - `fix`:   fix a bug
+ - `feat`:  add new feature
+ - `build`: changes affecting the build 
+ - `perf`:  tidy code (other than the above) and repository
+ - `doc`:   modify internal or external documentation
+ - `test`:  add or modify tests
+ - `tmp`:   a temporary branch for some other purpose (not PR/MR)
+
+ If one realizes that one commit serves multiple purposes, that suggests that
+ the commit might be split into two or more single-purpose commits.
+
+ Refer to [3] for the rationales of conventional commits.
+
+ ### Branch names
+
+ When naming an ephemeral branch, indicate its purpose by choosing among
+ `feature`, `bugfix`, `hotfix`, `release`, `wip`, or `exp`, abiding by the
+ following convention.
+
+ __Branch related to an issue__
+
+ `<purpose>/<issue number>/<short-descriptive-mnemonic>`
+
+ where `purpose` is one of the following:
+
+ * `feature`:   adding, modifying or removing a feature
+ * `bugfix`:    fixes a bug in the development branch
+ * `hotfix`:    fixes a but in the public (main) branch
+ * `wip`   :    work-in-progress (to be converted when done)
+
+ Use lowercase kebab-case for the `short-descriptive-mnemonic`.
+ 
+ __Release branch__
+
+ `release/<release number>`
+
+  where `release number` is the SemVer naming of the release preceded by 'v'.
+
+ __Experimental branch___
+
+ To experiment with something not related to an issue, use
+
+ `exp/<short-descriptive-mnemonic>`
+
+Examples
 
  * your PR/MR will fix the bug pointed out by issue #42 that
    crashes the program:
 
-   `fix/#42/stop-crashing`
+   `bugfix/42/divide-by-zero`
 
  * your PR/MR will add the featured described by issue #142 that
    adds a debug mode option:
 
-   `feat/#142/debug-option`
+   `featuer/142/debug-option`
+
+ * your PR/MR is meant to prepare the release 1.0.1
+
+   `release/v1.0.1`
 
  ### Code standards
 
@@ -75,7 +126,7 @@
     Write "This function does this and that."; not "this function 
     does this and that" if that is the whole sentence.
 
- ### How to comment
+ ### What to comment
 
   Make it easier for newcomers to join in: comment generously (considerately,
   not recklessly.) You may have heard that "good code documents itself" and
@@ -87,24 +138,43 @@
   even if that can be inferred from reading source --- bear in mind that
   some rookie developers may be contributing to learn programming skills.
 
- ### Code of conduct
 
- * Be respectful and welcoming to diversity.
- * Do not engage in raging arguments.
+ ### Repository policy
 
- ### Repository management
+ * Stable releases reside in the `main` branch.
 
- Latest stable releases resides in the `main` branch.
+ * Prereleases (alpha, beta etc.) reside in branch `prerelease`.
 
- Prerelease (alpha, beta, release candidates) reside in branch `prerelease`.
+ * When integrating ephemeral branches into permanent branches (GitFlow),
+   use merge, not rebase. It is ok, however, to thoughtfully squash selected
+   commits via interactive rebase before merging to highlight relevant
+   changes in the development history.
 
- If you are a developer and is assigned an issue, but you believe you are not
- able to handle it timely, please, try to reassign it to someone else.
+ * Label your issues and, if there is an issue template, use it as well.
 
- ChangeLog should be kept up-to-date; NEWS should be updated upon (pre)releases.
+ * If you are a developer and is assigned an issue, but you believe you are
+   not able to handle it timely, please, try to reassign it to someone else.
+
+ * File `ChangeLog` contains technical notes describing the notable changes
+   that interest the developers. It should be updated, if applicable, every
+   time the `develop` branch is modified.
+   
+ * File `NEWS` contains the release notes that interest the final user. It
+   should be updated upon every  public (pre)release.
+
+ * File `AUTHORS` lists all those who have contributed to the project (if
+   full names are not know, include e-mail or the username that the contributor
+   uses in the SCM platform (e.g. GitHub, GitLab), ensuring that the URL of
+   the project is also informed. This file should be kept updated.
 
  It should be needless to say, but do not commit unnecessary files (e.g. files
  that can be produced during the build process (if any).
+
+ ### Code of conduct
+
+ * Be respectful and welcoming to diversity.
+ 
+ * Do not engage in raging arguments.
 
  ## References
 
