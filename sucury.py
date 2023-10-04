@@ -79,7 +79,7 @@ def center_prompt(title, subtitle):
 
     while ( event := pygame.event.wait() ):
         if event.type == pygame.KEYDOWN:
-            break;
+            break
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
@@ -244,7 +244,7 @@ while True:
 
     ## Update the game
 
-    if (game_on):
+    if game_on:
 
         snake.update()
 
