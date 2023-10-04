@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 #
-#   Copyright (c) 2023, Monaco F. J. <monaco@usp.br>
+#   Copyright (c) 2023 by Monaco F. J. <monaco@usp.br>
+#   Copyright (c) 2023 by Sucury Authors
 #
-#   This file is part of KhobraPy.
+#   This file is part of Sucury.
 #
-#   KhobraPy is free software: you can redistribute it and/or modify
+#   Sucury is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
 #   the Free Software Foundation, either version 3 of the License, or
 #   (at your option) any later version.
