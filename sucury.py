@@ -192,7 +192,7 @@ class Apple:
 ## Draw the arena
 ##
 
-def drawGrid():
+def draw_grid():
     for x in range(0, WIDTH, GRID_SIZE):
         for y in range(0, HEIGHT, GRID_SIZE):
             rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
@@ -201,7 +201,7 @@ def drawGrid():
 score = BIG_FONT.render("1", True, MESSAGE_COLOR)
 score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
-drawGrid()
+draw_grid()
 
 snake = Snake()    # The snake
 
@@ -249,7 +249,7 @@ while True:
         snake.update()
 
         arena.fill(ARENA_COLOR)
-        drawGrid()
+        draw_grid()
 
         apple.update()
 
