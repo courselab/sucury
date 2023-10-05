@@ -1,22 +1,20 @@
 
- Sucury was written by the students of ICMC-USP.
+  Author information
+  ==============================
 
+  Sucury is a derivative work of the code from KhobraPy by Monaco F. J.,
+  distributed under GNU GPL vr3. KnobraPy source code can be found at
+  https://github.com/monacofj/khobrapy. The main changes applied to the
+   original code are listed in the file Changelog.
+
+  Sucury was written by the students of the course Open Source Systems,
+  class of 2023, at ICMC, University of Sao Paulo, with contributions
+  from several developers (GitHub usernames):
+
+  * Lucas Almeida (lalmeida32)
+
+  
  
-
- Sucury is a derivative work of KhobraPy.
-
- KhobraPy source code was originally written by Dr. Monaco F. J. as an
- educational tool to teach open-source development practices, tools and
- project management methodologies to graduate computer sciences students,
- at the University of São Paulo.
-
- Acknowledgments are due to the support from FOSS Research and Education Program
- of the Open Source Competence Center ICMC-USP, as well to all students and
- research colleagues who have provided valuable feedback.
-
- If you ever come to use this project to implement any programming course or
- instruction program, the athor would be glad if you let him know (monaco@usp.br).
-
 
  
  
