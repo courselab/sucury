@@ -156,7 +156,7 @@
      original code are listed in the file Changelog.
      ```
 
-     Keep this file updated, at least at every public (pre)release.
+     Keep `AUTHORS` updated, at least at every public (pre)release.
 
 
 
