@@ -32,6 +32,7 @@
  
  Submit your support branch and mark it as a pull/merge request.
  
+
  Commit messges
  ------------------------------
  
@@ -65,6 +66,7 @@
 
  Branch names
  ------------------------------
+ 
  When naming an ephemeral branch, indicate its purpose by choosing among
  `feature`, `bugfix`, `hotfix`, `release`, `wip`, or `exp`, abiding by the
  following convention.
@@ -89,6 +91,7 @@
  `release/<release number>`
 
   where `release number` is the SemVer naming of the release preceded by 'v'.
+
 
  ### Experimental branch
 
