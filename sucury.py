@@ -48,6 +48,14 @@ WINDOW_TITLE    = "KhobraPy" # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
 
+BLOCK_180_TURNS = True      # Disable 180° turns
+
+# Directions
+UP = (0, -1)
+RIGHT = (1, 0)
+DOWN = (0, 1)
+LEFT = (-1, 0)
+
 ##
 ## Game implementation.
 ##
@@ -111,6 +119,9 @@ class Snake:
         self.xmov = 1
         self.ymov = 0
 
+        # previous movement velocity
+        self.last_velocity = (self.xmov, self.ymov)
+
         # The snake has a head segement,
         self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
 
@@ -120,8 +131,14 @@ class Snake:
         # The snake is born.
         self.alive = True
 
-    # This function is called at each loop interation.
+    def change_direction(self, direction: tuple[int, int]):
+        # Remove 1-frame 180 turns that lead to death
+        if BLOCK_180_TURNS and (-self.last_velocity[0], -self.last_velocity[1]) == direction:
+            return
 
+        (self.xmov, self.ymov) = direction
+
+    # This function is called at each loop interation.
     def update(self):
         global apple
 
@@ -133,6 +150,11 @@ class Snake:
         for square in self.tail:
             if self.head.x == square.x and self.head.y == square.y:
                 self.alive = False
+
+        # Set the last_velocity, to remove 180° turns.
+        # By assigning it at the end of the frame, removes the possibility
+        # of a multi-input 180° turn
+        self.last_velocity = (self.xmov, self.ymov)
 
         # In the event of death, reset the game arena.
         if not self.alive:
@@ -228,20 +250,16 @@ while True:
             pygame.quit()
             sys.exit()
 
-          # Key pressed
+        # Key pressed
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:    # Down arrow:  move down
-                snake.ymov = 1
-                snake.xmov = 0
+                snake.change_direction(DOWN)
             elif event.key == pygame.K_UP:    # Up arrow:    move up
-                snake.ymov = -1
-                snake.xmov = 0
+                snake.change_direction(UP)
             elif event.key == pygame.K_RIGHT: # Right arrow: move right
-                snake.ymov = 0
-                snake.xmov = 1
+                snake.change_direction(RIGHT)
             elif event.key == pygame.K_LEFT:  # Left arrow:  move left
-                snake.ymov = 0
-                snake.xmov = -1
+                snake.change_direction(LEFT)
             elif event.key == pygame.K_q:     # Q         : quit game
                 pygame.quit()
                 sys.exit()
