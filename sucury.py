@@ -159,6 +159,8 @@ class Snake:
         # In the event of death, reset the game arena.
         if not self.alive:
 
+            # Save the highscore
+            save_score(len(self.tail))
             # Tell the bad news
             pygame.draw.rect(arena, DEAD_HEAD_COLOR, snake.head)
             center_prompt("Game Over", "Press to restart")
@@ -236,6 +238,37 @@ snake = Snake()    # The snake
 apple = Apple()    # An apple
 
 center_prompt("Welcome", "Press to start")
+
+##
+## Save the highscore to file
+##
+def save_score(score):
+
+    highscores = load_highscores()
+
+    if score > highscores[0]:
+        highscores[0] = score
+        highscores.sort()
+        file = open("highscores.sav", "wb")
+        highscores = bytearray(highscores)
+        file.write(highscores)
+        file.close()
+
+
+##
+## Load the highscores from save file
+##
+def load_highscores():
+    highscores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    try:
+        file = open("highscores.sav", "rb")
+    except:
+        return highscores
+
+    highscores = list(file.read(10))
+    file.close()
+    return highscores
+
 
 ##
 ## Main loop
