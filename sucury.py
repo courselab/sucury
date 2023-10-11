@@ -205,7 +205,7 @@ class Snake:
 
     # Sets that the snake should grow on the next update.
 
-    def Grow(self):
+    def grow(self):
         self.should_grow = True
 
 ##
@@ -304,7 +304,7 @@ while True:
 
     # If the head pass over an apple, lengthen the snake and drop another apple
     if snake.head.x == apple.x and snake.head.y == apple.y:
-        snake.Grow()
+        snake.grow()
         apple = Apple()
 
 
