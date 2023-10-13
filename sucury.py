@@ -189,7 +189,9 @@ class Snake:
 
         # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
         if (self.xmov or self.ymov):
-
+            
+            insert_tuple = (-1,-1)
+            
             # Prepend a new segment to tail.
             self.tail.insert(0,pygame.Rect(self.head.x, self.head.y, GRID_SIZE, GRID_SIZE))
             
@@ -197,7 +199,11 @@ class Snake:
             if self.should_grow:
                 self.should_grow = False
             else:
-                self.tail.pop()
+                remove_rect = self.tail.pop()
+                insert_tuple = (remove_rect.x,remove_rect.y)
+            
+            # Since snake will move, the position that was occupied by the last segment of the tail is valid and the position that the head will occupy is not
+            apple.update_valid_positions((self.head.x,self.head.y),insert_tuple)
 
             # Move the head along current direction.
             self.head.x += self.xmov * GRID_SIZE
@@ -215,9 +221,11 @@ class Snake:
 class Apple:
     def __init__(self):
 
-        # Pick a random position within the game arena
-        self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
-        self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+        # list that keeps track of valid_positions where the apple could be spawned
+        self.valid_positions = [(x * GRID_SIZE,y * GRID_SIZE) for x in range(WIDTH//GRID_SIZE) for y in range(HEIGHT//GRID_SIZE)]
+
+        # Pick a random index and get that position
+        self.x,self.y = self.valid_positions[random.randint(0,len(self.valid_positions)-1)]
 
         # Create an apple at that location
         self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
@@ -225,9 +233,21 @@ class Apple:
     # This function is called each interation of the game loop
 
     def update(self):
-
         # Drop the apple
         pygame.draw.rect(arena, APPLE_COLOR, self.rect)
+    
+    def update_valid_positions(self,remove_tuple,insert_tuple):
+        self.valid_positions.remove(remove_tuple)
+
+        if insert_tuple != (-1,-1):
+            self.valid_positions.append(insert_tuple)
+    
+    def new_apple(self):
+        # Pick a random index and get that position
+        self.x,self.y = self.valid_positions[random.randint(0,len(self.valid_positions)-1)]
+
+        # Create an apple at that location
+        self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
 
 
 ##
@@ -305,7 +325,8 @@ while True:
     # If the head pass over an apple, lengthen the snake and drop another apple
     if snake.head.x == apple.x and snake.head.y == apple.y:
         snake.grow()
-        apple = Apple()
+        apple.new_apple()
+        apple.update()
 
 
     # Update display and move clock.
