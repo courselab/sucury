@@ -33,7 +33,7 @@ import sys
 
 WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
-GRID_SIZE = 50               # Square grid size.
+grid_size = 50               # Square grid size.
 
 HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
 DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
@@ -105,7 +105,7 @@ def center_prompt(title, subtitle):
 ### Display the main menu.
 ###
 def main_menu():
-    global GRID_SIZE
+    global grid_size
     # Show title and subtitle.
     center_title = BIG_FONT.render("Welcome", True, MESSAGE_COLOR)
     center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
@@ -113,25 +113,25 @@ def main_menu():
     center_subtitle = SMALL_FONT.render("Press to Start.", True, MESSAGE_COLOR)
     center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
     
-    grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {GRID_SIZE}", True, MESSAGE_COLOR)
+    grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {grid_size}", True, MESSAGE_COLOR)
     grid_size_text_rect = grid_size_text.get_rect(center=(WIDTH/2, HEIGHT*3/4 + 20))
 
     while ( event := pygame.event.wait() ):
         if event.type == pygame.KEYDOWN:
             # Change grid size.
             if event.key == pygame.K_UP:
-                GRID_SIZE += 1
-                if GRID_SIZE >= 100: GRID_SIZE = 100  # Limit grid size up to 100px.
+                grid_size += 1
+                if grid_size >= 100: grid_size = 100  # Limit grid size up to 100px.
             elif event.key == pygame.K_DOWN:
-                GRID_SIZE -= 1
-                if GRID_SIZE <= 10: GRID_SIZE = 10 # Limit grid size down to 10px.
+                grid_size -= 1
+                if grid_size <= 10: grid_size = 10 # Limit grid size down to 10px.
             else:   # Exit if other keys are pressed. 
                 break
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-        grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {GRID_SIZE}", True, MESSAGE_COLOR)
+        grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {grid_size}", True, MESSAGE_COLOR)
         arena.fill(ARENA_COLOR)
         draw_grid()
 
@@ -150,7 +150,7 @@ class Snake:
 
         # Dimension of each snake segment.
 
-        self.x, self.y = GRID_SIZE, GRID_SIZE
+        self.x, self.y = grid_size, grid_size
 
         # Initial direction
         # xmov :  -1 left,    0 still,   1 right
@@ -162,7 +162,7 @@ class Snake:
         self.last_velocity = (self.xmov, self.ymov)
 
         # The snake has a head segement,
-        self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+        self.head = pygame.Rect(self.x, self.y, grid_size, grid_size)
 
         # and a tail (array of segments).
         self.tail = []
@@ -206,8 +206,8 @@ class Snake:
             center_prompt("Game Over", "Press to restart")
 
             # Respan the head
-            self.x, self.y = GRID_SIZE, GRID_SIZE
-            self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+            self.x, self.y = grid_size, grid_size
+            self.head = pygame.Rect(self.x, self.y, grid_size, grid_size)
 
             # Respan the initial tail
             self.tail = []
@@ -230,7 +230,7 @@ class Snake:
         if (self.xmov or self.ymov):
 
             # Prepend a new segment to tail.
-            self.tail.insert(0,pygame.Rect(self.head.x, self.head.y, GRID_SIZE, GRID_SIZE))
+            self.tail.insert(0,pygame.Rect(self.head.x, self.head.y, grid_size, grid_size))
             
             # If the snake should grow, keeps the last segment, else removes it.
             if self.should_grow:
@@ -239,8 +239,8 @@ class Snake:
                 self.tail.pop()
 
             # Move the head along current direction.
-            self.head.x += self.xmov * GRID_SIZE
-            self.head.y += self.ymov * GRID_SIZE
+            self.head.x += self.xmov * grid_size
+            self.head.y += self.ymov * grid_size
 
     # Sets that the snake should grow on the next update.
 
@@ -255,11 +255,11 @@ class Apple:
     def __init__(self):
 
         # Pick a random position within the game arena
-        self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
-        self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+        self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
+        self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
 
         # Create an apple at that location
-        self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+        self.rect = pygame.Rect(self.x, self.y, grid_size, grid_size)
 
     # This function is called each interation of the game loop
 
@@ -274,9 +274,9 @@ class Apple:
 ##
 
 def draw_grid():
-    for x in range(0, WIDTH, GRID_SIZE):
-        for y in range(0, HEIGHT, GRID_SIZE):
-            rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
+    for x in range(0, WIDTH, grid_size):
+        for y in range(0, HEIGHT, grid_size):
+            rect = pygame.Rect(x, y, grid_size, grid_size)
             pygame.draw.rect(arena, GRID_COLOR, rect, 1)
 
 score = BIG_FONT.render("1", True, MESSAGE_COLOR)
