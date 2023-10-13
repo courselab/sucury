@@ -101,7 +101,46 @@ def center_prompt(title, subtitle):
         pygame.quit()
         sys.exit()
 
+###
+### Display the main menu.
+###
+def main_menu():
+    global GRID_SIZE
+    # Show title and subtitle.
+    center_title = BIG_FONT.render("Welcome", True, MESSAGE_COLOR)
+    center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
 
+    center_subtitle = SMALL_FONT.render("Press to Start.", True, MESSAGE_COLOR)
+    center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
+    
+    grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {GRID_SIZE}", True, MESSAGE_COLOR)
+    grid_size_text_rect = grid_size_text.get_rect(center=(WIDTH/2, HEIGHT*3/4 + 20))
+
+    while ( event := pygame.event.wait() ):
+        if event.type == pygame.KEYDOWN:
+            # Change grid size.
+            if event.key == pygame.K_UP:
+                GRID_SIZE += 1
+                if GRID_SIZE >= 100: GRID_SIZE = 100  # Limit grid size up to 100px.
+            elif event.key == pygame.K_DOWN:
+                GRID_SIZE -= 1
+                if GRID_SIZE <= 10: GRID_SIZE = 10 # Limit grid size down to 10px.
+            else:   # Exit if other keys are pressed. 
+                break
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+        grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {GRID_SIZE}", True, MESSAGE_COLOR)
+        arena.fill(ARENA_COLOR)
+        draw_grid()
+
+        arena.blit(center_title, center_title_rect)
+        arena.blit(center_subtitle, center_subtitle_rect)
+        arena.blit(grid_size_text, grid_size_text_rect)
+
+        pygame.display.update()
+ 
 ##
 ## Snake class
 ##
@@ -243,13 +282,10 @@ def draw_grid():
 score = BIG_FONT.render("1", True, MESSAGE_COLOR)
 score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
-draw_grid()
+main_menu()
 
 snake = Snake()    # The snake
-
 apple = Apple()    # An apple
-
-center_prompt("Welcome", "Press to start")
 
 ##
 ## Main loop
