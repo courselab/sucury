@@ -46,7 +46,11 @@ MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
 
 WINDOW_TITLE    = "KhobraPy" # Window title.
 
-CLOCK_TICKS     = 7         # How fast the snake moves.
+CLOCK_TICKS     = 7          # How fast the snake moves.
+
+MIN_SPEED       = 1          # Min Snake Speed
+MAX_SPEED       = 5          # Max Snake Speed
+current_speed   = MIN_SPEED
 
 ##
 ## Game implementation.
@@ -148,6 +152,10 @@ class Snake:
             # Respan the initial tail
             self.tail = []
 
+            # Reset the speed to the minimum value
+            global current_speed
+            current_speed = MIN_SPEED
+
             # Initial direction
             self.xmov = 1 # Right
             self.ymov = 0 # Still
@@ -247,6 +255,14 @@ while True:
                 sys.exit()
             elif event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
+            elif event.key == pygame.K_f:
+                if current_speed < MAX_SPEED:
+                    current_speed += 1
+                print(current_speed)
+            elif event.key == pygame.K_l:
+                if current_speed > MIN_SPEED:
+                    current_speed -= 1
+                print(current_speed)
 
     ## Update the game
 
@@ -278,4 +294,4 @@ while True:
 
     # Update display and move clock.
     pygame.display.update()
-    clock.tick(CLOCK_TICKS)
+    clock.tick(CLOCK_TICKS * current_speed)
