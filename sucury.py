@@ -44,9 +44,11 @@ GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
 SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
 MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
 
-WINDOW_TITLE    = "KhobraPy" # Window title.
+WINDOW_TITLE    = "Sucury" # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
+
+BORDERLESS_MODE = False
 
 ##
 ## Game implementation.
@@ -68,6 +70,7 @@ game_on = 1
 ## This function is called when the snake dies.
 
 def center_prompt(title, subtitle):
+    global BORDERLESS_MODE
 
     # Show title and subtitle.
 
@@ -89,6 +92,8 @@ def center_prompt(title, subtitle):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+    if event.key == pygame.K_b:          # 'B' Borderless switch
+        BORDERLESS_MODE = not BORDERLESS_MODE
     if event.key == pygame.K_q:          # 'Q' quits game
         pygame.quit()
         sys.exit()
@@ -123,11 +128,19 @@ class Snake:
     # This function is called at each loop interation.
 
     def update(self):
-        global apple
+        global apple, BORDERLESS_MODE
 
         # Check for border crash.
-        if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
-            self.alive = False
+        if not BORDERLESS_MODE:
+            if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
+                self.alive = False
+        else:
+            if self.head.x not in range(0, WIDTH):
+                if(self.head.x < 0): self.head.x = WIDTH
+                else: self.head.x = -1 
+            if self.head.y not in range(0, HEIGHT):
+                if(self.head.y < 0): self.head.y = HEIGHT
+                else: self.head.y = -1 
 
         # Check for self-bite.
         for square in self.tail:
@@ -214,6 +227,9 @@ snake = Snake()    # The snake
 apple = Apple()    # An apple
 
 center_prompt("Welcome", "Press to start")
+
+
+
 
 ##
 ## Main loop
