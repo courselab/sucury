@@ -35,7 +35,10 @@ WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
 GRID_SIZE = 50               # Square grid size.
 
+MAXIMUM_SNAKE_SIZE = (WIDTH/GRID_SIZE)*(WIDTH/GRID_SIZE) # Maximum snake size
+
 HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
+WIN_HEAD_COLOR  = "#4de3e8"  # Color of the winning snake's head.
 DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
 TAIL_COLOR      = "#00ff00"  # Color of the snake's tail.
 APPLE_COLOR     = "#aa0000"  # Color of the apple.
@@ -116,7 +119,10 @@ class Snake:
 
         # and a tail (array of segments).
         self.tail = []
-
+        
+        # The snake has a size
+        self.size = 1 + len(self.tail)
+        
         # The snake is born.
         self.alive = True
 
@@ -133,7 +139,33 @@ class Snake:
         for square in self.tail:
             if self.head.x == square.x and self.head.y == square.y:
                 self.alive = False
+        
+        # In the event of winning, reset the game arena.
+        if self.size == MAXIMUM_SNAKE_SIZE:
+            # Tell the good news
+            pygame.draw.rect(arena, WIN_HEAD_COLOR, snake.head)
+            center_prompt("You Won", "Press to restart")
 
+            # Respan the head
+            self.x, self.y = GRID_SIZE, GRID_SIZE
+            self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+
+            # Respan the initial tail
+            self.tail = []
+
+            # Reset size
+            self.size = 1
+
+            # Initial direction
+            self.xmov = 1 # Right
+            self.ymov = 0 # Still
+
+            # Resurrection
+            self.alive = True
+
+            # Drop and apple
+            apple = Apple()
+            
         # In the event of death, reset the game arena.
         if not self.alive:
 
@@ -147,6 +179,8 @@ class Snake:
 
             # Respan the initial tail
             self.tail = []
+            # Reset size
+            self.size = 1
 
             # Initial direction
             self.xmov = 1 # Right
@@ -247,6 +281,8 @@ while True:
                 sys.exit()
             elif event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
+            elif event.key == pygame.K_z:     # Z         : win game (TEST)
+                snake.size = MAXIMUM_SNAKE_SIZE
 
     ## Update the game
 
@@ -267,7 +303,7 @@ while True:
     pygame.draw.rect(arena, HEAD_COLOR, snake.head)
 
     # Show score (snake length = head + tail)
-    score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
+    score = BIG_FONT.render(f"{len(snake.tail) + 1}", True, SCORE_COLOR)
     arena.blit(score, score_rect)
 
     # If the head pass over an apple, lengthen the snake and drop another apple
