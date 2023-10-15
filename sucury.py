@@ -254,9 +254,24 @@ class Snake:
 class Apple:
     def __init__(self):
 
+        global snake
         # Pick a random position within the game arena
         self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
         self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
+
+        while True: # Keep generating until it's a  valid position
+
+            if (self.x,self.y) == (snake.head.x,snake.head.y): # If it's on top of snake head
+                self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
+                self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
+                continue
+            for segment in snake.tail: # check if it's on top of snake body
+                if (self.x,self.y) == (segment.x,segment.y): 
+                    self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
+                    self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
+                    break
+            else:
+                break
 
         # Create an apple at that location
         self.rect = pygame.Rect(self.x, self.y, grid_size, grid_size)
