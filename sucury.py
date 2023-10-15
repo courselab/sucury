@@ -209,8 +209,8 @@ score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
 best_score_num = 0 # Best score in the run
 
-best_socre = SMALL_FONT.render("1", True, MESSAGE_COLOR)
-best_score_rect = best_socre.get_rect(center=(WIDTH/2, HEIGHT/2+HEIGHT/3))
+best_score = SMALL_FONT.render("1", True, MESSAGE_COLOR)
+best_score_rect = best_score.get_rect(center=(WIDTH/2, HEIGHT/2+HEIGHT/3))
 
 draw_grid()
 
