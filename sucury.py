@@ -302,13 +302,13 @@ while True:
 
         # Key pressed
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:    # Down arrow:  move down
+            if event.key == pygame.K_DOWN or event.key == pygame.K_s:    # Down arrow or S:  move down
                 snake.change_direction(DOWN)
-            elif event.key == pygame.K_UP:    # Up arrow:    move up
+            elif event.key == pygame.K_UP or event.key == pygame.K_w:    # Up arrow or W:    move up
                 snake.change_direction(UP)
-            elif event.key == pygame.K_RIGHT: # Right arrow: move right
+            elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: # Right arrow or D: move right
                 snake.change_direction(RIGHT)
-            elif event.key == pygame.K_LEFT:  # Left arrow:  move left
+            elif event.key == pygame.K_LEFT or event.key == pygame.K_a:  # Left arrow or A:  move left
                 snake.change_direction(LEFT)
             elif event.key == pygame.K_q:     # Q         : quit game
                 pygame.quit()
