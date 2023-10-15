@@ -35,7 +35,7 @@ WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
 GRID_SIZE = 50               # Square grid size.
 
-MAXIMUM_SNAKE_SIZE = (WIDTH/GRID_SIZE)*(WIDTH/GRID_SIZE) # Maximum snake size
+MAXIMUM_SNAKE_SIZE = (WIDTH/GRID_SIZE)*(HEIGHT/GRID_SIZE) # Maximum snake size
 
 HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
 WIN_HEAD_COLOR  = "#4de3e8"  # Color of the winning snake's head.
