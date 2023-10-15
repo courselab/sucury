@@ -48,6 +48,8 @@ WINDOW_TITLE    = "KhobraPy" # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
 
+START_POS_PADDING = 3       # Size of padding so that the snake does not start to close to the border.
+
 ##
 ## Game implementation.
 ##
@@ -101,15 +103,25 @@ def center_prompt(title, subtitle):
 class Snake:
     def __init__(self):
 
-        # Dimension of each snake segment.
+        # Calculating range of possible start positions for the snake.
 
-        self.x, self.y = GRID_SIZE, GRID_SIZE
+        max_x, max_y = (WIDTH/GRID_SIZE)-START_POS_PADDING, (HEIGHT/GRID_SIZE)-START_POS_PADDING
+        min_x, min_y = START_POS_PADDING, START_POS_PADDING
+
+        # Dimension of each snake segment times a random position in range.
+
+        self.x, self.y = random.randint(min_x, max_x)*GRID_SIZE, random.randint(min_y, max_y)*GRID_SIZE
 
         # Initial direction
         # xmov :  -1 left,    0 still,   1 right
         # ymov :  -1 up       0 still,   1 dows
-        self.xmov = 1
-        self.ymov = 0
+
+        if self.x > WIDTH/2:    # If the snake starts at the right side of the screen, it goes left.
+            self.xmov = -1
+            self.ymov = 0
+        else:                   # Otherwise, it goes right
+            self.xmov = 1
+            self.ymov = 0
 
         # The snake has a head segement,
         self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
@@ -142,15 +154,21 @@ class Snake:
             center_prompt("Game Over", "Press to restart")
 
             # Respan the head
-            self.x, self.y = GRID_SIZE, GRID_SIZE
+            max_x, max_y = (WIDTH/GRID_SIZE)-START_POS_PADDING, (HEIGHT/GRID_SIZE)-START_POS_PADDING
+            min_x, min_y = START_POS_PADDING, START_POS_PADDING
+            self.x, self.y = random.randint(min_x, max_x)*GRID_SIZE, random.randint(min_y, max_y)*GRID_SIZE
+
             self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
 
             # Respan the initial tail
             self.tail = []
 
-            # Initial direction
-            self.xmov = 1 # Right
-            self.ymov = 0 # Still
+            if self.x > WIDTH/2:    # If the snake starts at the right side of the screen, it goes left.
+                self.xmov = -1
+                self.ymov = 0
+            else:                   # Otherwise, it goes right
+                self.xmov = 1
+                self.ymov = 0
 
             # Resurrection
             self.alive = True
