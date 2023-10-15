@@ -207,6 +207,11 @@ def draw_grid():
 score = BIG_FONT.render("1", True, MESSAGE_COLOR)
 score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
+best_score_num = 0 # Best score in the run
+
+best_socre = SMALL_FONT.render("1", True, MESSAGE_COLOR)
+best_score_rect = best_socre.get_rect(center=(WIDTH/2, HEIGHT/2+HEIGHT/3))
+
 draw_grid()
 
 snake = Snake()    # The snake
@@ -223,12 +228,12 @@ while True:
 
     for event in pygame.event.get():           # Wait for events
 
-       # App terminated
+        # App terminated
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-          # Key pressed
+        # Key pressed
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_DOWN:    # Down arrow:  move down
                 snake.ymov = 1
@@ -252,6 +257,10 @@ while True:
 
     if game_on:
 
+        # If the player gets a new record
+        if(len(snake.tail) > best_score_num):
+            best_score_num = len(snake.tail)
+
         snake.update()
 
         arena.fill(ARENA_COLOR)
@@ -269,6 +278,10 @@ while True:
     # Show score (snake length = head + tail)
     score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
     arena.blit(score, score_rect)
+    
+    # Show the best score in the run until the end of the current game
+    best_score = SMALL_FONT.render(f"Best score: {best_score_num}", True, SCORE_COLOR)
+    arena.blit(best_score, best_score_rect)
 
     # If the head pass over an apple, lengthen the snake and drop another apple
     if snake.head.x == apple.x and snake.head.y == apple.y:
