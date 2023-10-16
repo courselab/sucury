@@ -31,7 +31,7 @@ import sys
 ## Game customization.
 ##
 
-WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
+screen_width, screen_height = 800, 800     # Game screen dimensions.
 
 grid_size = 50               # Square grid size.
 
@@ -64,10 +64,10 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
-arena = pygame.display.set_mode((WIDTH, HEIGHT))
+arena = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE)
 
-BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
-SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
+BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(screen_width/8))
+SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(screen_width/20))
 
 pygame.display.set_caption(WINDOW_TITLE)
 
@@ -76,15 +76,16 @@ game_on = 1
 ## This function is called when the snake dies.
 
 def center_prompt(title, subtitle):
+    global screen_width, screen_height
 
     # Show title and subtitle.
 
     center_title = BIG_FONT.render(title, True, MESSAGE_COLOR)
-    center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
+    center_title_rect = center_title.get_rect(center=(screen_width/2, screen_height/2))
     arena.blit(center_title, center_title_rect)
 
     center_subtitle = SMALL_FONT.render(subtitle, True, MESSAGE_COLOR)
-    center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
+    center_subtitle_rect = center_subtitle.get_rect(center=(screen_width/2, screen_height*2/3))
     arena.blit(center_subtitle, center_subtitle_rect)
 
     pygame.display.update()
@@ -94,9 +95,10 @@ def center_prompt(title, subtitle):
     while ( event := pygame.event.wait() ):
         if event.type == pygame.KEYDOWN:
             break
-        if event.type == pygame.QUIT:
+        elif event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
     if event.key == pygame.K_q:          # 'Q' quits game
         pygame.quit()
         sys.exit()
@@ -106,15 +108,16 @@ def center_prompt(title, subtitle):
 ###
 def main_menu():
     global grid_size
+    global screen_width, screen_height
     # Show title and subtitle.
     center_title = BIG_FONT.render("Welcome", True, MESSAGE_COLOR)
-    center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
+    center_title_rect = center_title.get_rect(center=(screen_width/2, screen_height/2))
 
     center_subtitle = SMALL_FONT.render("Press to Start.", True, MESSAGE_COLOR)
-    center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
+    center_subtitle_rect = center_subtitle.get_rect(center=(screen_width/2, screen_height*2/3))
     
     grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {grid_size}", True, MESSAGE_COLOR)
-    grid_size_text_rect = grid_size_text.get_rect(center=(WIDTH/2, HEIGHT*3/4 + 20))
+    grid_size_text_rect = grid_size_text.get_rect(center=(screen_width/2, screen_height*3/4 + 20))
 
     while ( event := pygame.event.wait() ):
         if event.type == pygame.KEYDOWN:
@@ -130,7 +133,15 @@ def main_menu():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == pygame.VIDEORESIZE:
+            # Getting new weight from pygame screen and assing to global values.
+            screen_width, screen_height = pygame.display.get_surface().get_size()
 
+            # Changing center titles to be always in the middle of the new screen
+            center_title_rect = center_title.get_rect(center=(screen_width/2, screen_height/2))
+            center_subtitle_rect = center_subtitle.get_rect(center=(screen_width/2, screen_height*2/3))
+            grid_size_text_rect = grid_size_text.get_rect(center=(screen_width/2, screen_height*3/4 + 20))
+            
         grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {grid_size}", True, MESSAGE_COLOR)
         arena.fill(ARENA_COLOR)
         draw_grid()
@@ -185,7 +196,7 @@ class Snake:
         global apple
 
         # Check for border crash.
-        if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
+        if self.head.x not in range(0, screen_width) or self.head.y not in range(0, screen_height):
             self.alive = False
 
         # Check for self-bite.
@@ -255,8 +266,8 @@ class Apple:
     def __init__(self):
 
         # Pick a random position within the game arena
-        self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
-        self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
+        self.x = int(random.randint(0, screen_width)/grid_size) * grid_size
+        self.y = int(random.randint(0, screen_height)/grid_size) * grid_size
 
         # Create an apple at that location
         self.rect = pygame.Rect(self.x, self.y, grid_size, grid_size)
@@ -274,13 +285,12 @@ class Apple:
 ##
 
 def draw_grid():
-    for x in range(0, WIDTH, grid_size):
-        for y in range(0, HEIGHT, grid_size):
+    for x in range(0, screen_width, grid_size):
+        for y in range(0, screen_height, grid_size):
             rect = pygame.Rect(x, y, grid_size, grid_size)
             pygame.draw.rect(arena, GRID_COLOR, rect, 1)
 
 score = BIG_FONT.render("1", True, MESSAGE_COLOR)
-score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
 main_menu()
 
@@ -299,6 +309,9 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == pygame.VIDEORESIZE:
+            # Getting new weight from pygame screen and assing to global values.
+            screen_width, screen_height = pygame.display.get_surface().get_size()
 
         # Key pressed
         if event.type == pygame.KEYDOWN:
@@ -316,16 +329,16 @@ while True:
             elif event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
 
+    # These will always be updated in case the game is paused and the screen is resized.
+    arena.fill(ARENA_COLOR)
+    draw_grid()
+    apple.update()
+    
+
     ## Update the game
 
     if game_on:
-
         snake.update()
-
-        arena.fill(ARENA_COLOR)
-        draw_grid()
-
-        apple.update()
 
     # Draw the tail
     for square in snake.tail:
@@ -336,6 +349,8 @@ while True:
 
     # Show score (snake length = head + tail)
     score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
+    # Calculating where the score will be displayed.
+    score_rect = score.get_rect(center=(screen_width/2, screen_height/20+screen_height/30))
     arena.blit(score, score_rect)
 
     # If the head pass over an apple, lengthen the snake and drop another apple
