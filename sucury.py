@@ -173,12 +173,13 @@ class Snake:
         # The snake should grow in the next update.
         self.should_grow = False
 
-    def change_direction(self, direction: tuple[int, int]):
+    def change_direction(self, direction: "tuple[int, int]"):
         # Remove 1-frame 180 turns that lead to death
         if BLOCK_180_TURNS and (-self.last_velocity[0], -self.last_velocity[1]) == direction:
             return
 
-        (self.xmov, self.ymov) = direction
+        self.xmov = direction[0]
+        self.ymov = direction[1]
 
     # This function is called at each loop interation.
     def update(self):
