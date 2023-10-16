@@ -48,9 +48,24 @@ WINDOW_TITLE    = "KhobraPy" # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
 
+## This function is used to set the window size
+
+def set_window_size():
+    global WIDTH, HEIGHT
+    try:
+        width = int(input("Enter the width of the window: "))
+        height = int(input("Enter the height of the window: "))
+        WIDTH, HEIGHT = width, height
+    except ValueError:
+        print("Invalid input. Using default window size.")
+
+
+
 ##
 ## Game implementation.
 ##
+
+set_window_size()
 
 pygame.init()
 
