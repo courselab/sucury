@@ -280,71 +280,73 @@ def draw_grid():
             rect = pygame.Rect(x, y, grid_size, grid_size)
             pygame.draw.rect(arena, GRID_COLOR, rect, 1)
 
-score = BIG_FONT.render("1", True, MESSAGE_COLOR)
-score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
-main_menu()
+if __name__ == "__main__":
+    score = BIG_FONT.render("1", True, MESSAGE_COLOR)
+    score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
-snake = Snake()    # The snake
-apple = Apple()    # An apple
+    main_menu()
 
-##
-## Main loop
-##
+    snake = Snake()    # The snake
+    apple = Apple()    # An apple
 
-while True:
+    ##
+    ## Main loop
+    ##
 
-    for event in pygame.event.get():           # Wait for events
+    while True:
 
-       # App terminated
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
+        for event in pygame.event.get():           # Wait for events
 
-        # Key pressed
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:    # Down arrow or S:  move down
-                snake.change_direction(DOWN)
-            elif event.key == pygame.K_UP or event.key == pygame.K_w:    # Up arrow or W:    move up
-                snake.change_direction(UP)
-            elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: # Right arrow or D: move right
-                snake.change_direction(RIGHT)
-            elif event.key == pygame.K_LEFT or event.key == pygame.K_a:  # Left arrow or A:  move left
-                snake.change_direction(LEFT)
-            elif event.key == pygame.K_q:     # Q         : quit game
+        # App terminated
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.key == pygame.K_p:     # S         : pause game
-                game_on = not game_on
 
-    ## Update the game
+            # Key pressed
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:    # Down arrow or S:  move down
+                    snake.change_direction(DOWN)
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:    # Up arrow or W:    move up
+                    snake.change_direction(UP)
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: # Right arrow or D: move right
+                    snake.change_direction(RIGHT)
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:  # Left arrow or A:  move left
+                    snake.change_direction(LEFT)
+                elif event.key == pygame.K_q:     # Q         : quit game
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_p:     # S         : pause game
+                    game_on = not game_on
 
-    if game_on:
+        ## Update the game
 
-        snake.update()
+        if game_on:
 
-        arena.fill(ARENA_COLOR)
-        draw_grid()
+            snake.update()
 
-        apple.update()
+            arena.fill(ARENA_COLOR)
+            draw_grid()
 
-    # Draw the tail
-    for square in snake.tail:
-        pygame.draw.rect(arena, TAIL_COLOR, square)
+            apple.update()
 
-    # Draw head
-    pygame.draw.rect(arena, HEAD_COLOR, snake.head)
+        # Draw the tail
+        for square in snake.tail:
+            pygame.draw.rect(arena, TAIL_COLOR, square)
 
-    # Show score (snake length = head + tail)
-    score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
-    arena.blit(score, score_rect)
+        # Draw head
+        pygame.draw.rect(arena, HEAD_COLOR, snake.head)
 
-    # If the head pass over an apple, lengthen the snake and drop another apple
-    if snake.head.x == apple.x and snake.head.y == apple.y:
-        snake.grow()
-        apple = Apple()
+        # Show score (snake length = head + tail)
+        score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
+        arena.blit(score, score_rect)
+
+        # If the head pass over an apple, lengthen the snake and drop another apple
+        if snake.head.x == apple.x and snake.head.y == apple.y:
+            snake.grow()
+            apple = Apple()
 
 
-    # Update display and move clock.
-    pygame.display.update()
-    clock.tick(CLOCK_TICKS)
+        # Update display and move clock.
+        pygame.display.update()
+        clock.tick(CLOCK_TICKS)
