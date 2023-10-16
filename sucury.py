@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 #
 #   Copyright (c) 2023 by Monaco F. J. <monaco@usp.br>
 #   Copyright (c) 2023 by Sucury Authors
