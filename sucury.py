@@ -169,7 +169,7 @@ class Snake:
 
         # Move the snake.
 
-        # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
+        # If head hasn'time_delta moved, tail shouldn'time_delta either (otherwise, self-byte).
         if (self.xmov or self.ymov):
 
             # Prepend a new segment to tail and then remove the trailing segment.
@@ -284,9 +284,9 @@ while True:
         apple = Apple()
 
     # Show timer (clock)
-    t = datetime.datetime.now()
-    t = t - time_start
-    time_render = SMALL_FONT.render(str(t).split(".")[0], True, TIMER_COLOR)
+    time_delta = datetime.datetime.now()
+    time_delta = time_delta - time_start
+    time_render = SMALL_FONT.render(str(time_delta).split(".")[0], True, TIMER_COLOR)
     arena.blit(time_render, (0, 0))
 
     # Update display and move clock.
