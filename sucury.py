@@ -57,22 +57,7 @@ RIGHT = (1, 0)
 DOWN = (0, 1)
 LEFT = (-1, 0)
 
-##
-## Game implementation.
-##
 
-pygame.init()
-
-clock = pygame.time.Clock()
-
-arena = pygame.display.set_mode((WIDTH, HEIGHT))
-
-BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
-SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
-
-pygame.display.set_caption(WINDOW_TITLE)
-
-game_on = 1
 
 ## This function is called when the snake dies.
 
@@ -292,6 +277,23 @@ def init_cli_parser():
 if __name__ == "__main__":
     parser = init_cli_parser()
     args = parser.parse_args()
+
+    ##
+    ## Game implementation.
+    ##
+
+    pygame.init()
+
+    clock = pygame.time.Clock()
+
+    arena = pygame.display.set_mode((WIDTH, HEIGHT))
+
+    BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
+    SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
+
+    pygame.display.set_caption(WINDOW_TITLE)
+
+    game_on = 1
 
     score = BIG_FONT.render("1", True, MESSAGE_COLOR)
     score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
