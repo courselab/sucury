@@ -169,7 +169,7 @@ class Snake:
 
         # Move the snake.
 
-        # If head hasn'time_delta moved, tail shouldn'time_delta either (otherwise, self-byte).
+        # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
         if (self.xmov or self.ymov):
 
             # Prepend a new segment to tail and then remove the trailing segment.
