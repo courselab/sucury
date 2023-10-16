@@ -26,6 +26,7 @@
 import pygame
 import random
 import sys
+from pygame import mixer
 
 ##
 ## Game customization.
@@ -65,6 +66,14 @@ pygame.init()
 clock = pygame.time.Clock()
 
 arena = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# Initializes music and sound effects
+mixer.music.load("assets/sounds/gamemusic.mp3")
+eat_apple_sound = mixer.Sound("assets/sounds/eat-apple.wav")
+game_start_sound = mixer.Sound("assets/sounds/game-start.mp3")
+death_sound = mixer.Sound("assets/sounds/death.mp3")
+mixer.music.play(loops=-1)
+
 
 BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
 SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
@@ -186,11 +195,15 @@ class Snake:
 
         # Check for border crash.
         if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
+            mixer.music.stop() # Stop the music when dying
+            mixer.Sound.play(death_sound) # Play the sound of death
             self.alive = False
 
         # Check for self-bite.
         for square in self.tail:
             if self.head.x == square.x and self.head.y == square.y:
+                mixer.music.stop() # Stop the music when dying
+                mixer.Sound.play(death_sound) # Play the sound of death
                 self.alive = False
 
         # Set the last_velocity, to remove 180° turns.
@@ -207,7 +220,7 @@ class Snake:
 
             # Respan the head
             self.x, self.y = grid_size, grid_size
-            self.head = pygame.Rect(self.x, self.y, grid_size, grid_size)
+            self.head = pygame.Rect(self.x, self.y, grid_size, grid_size)            
 
             # Respan the initial tail
             self.tail = []
@@ -219,6 +232,9 @@ class Snake:
             # Resurrection
             self.alive = True
             self.should_grow = False
+
+            # When reborn, the music starts again
+            mixer.music.play(loops=-1)
 
             # Drop and apple
             apple = Apple()
@@ -287,6 +303,9 @@ main_menu()
 snake = Snake()    # The snake
 apple = Apple()    # An apple
 
+# Play the start sound
+mixer.Sound.play(game_start_sound)
+
 ##
 ## Main loop
 ##
@@ -315,6 +334,10 @@ while True:
                 sys.exit()
             elif event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
+                if game_on:
+                    mixer.music.unpause()
+                else:
+                    mixer.music.pause()
 
     ## Update the game
 
@@ -340,6 +363,7 @@ while True:
 
     # If the head pass over an apple, lengthen the snake and drop another apple
     if snake.head.x == apple.x and snake.head.y == apple.y:
+        mixer.Sound.play(eat_apple_sound)
         snake.grow()
         apple = Apple()
 
