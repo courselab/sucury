@@ -24,6 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pygame
+import datetime
 import random
 import sys
 
@@ -43,6 +44,7 @@ ARENA_COLOR     = "#202020"  # Color of the ground.
 GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
 SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
 MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
+TIMER_COLOR     = "#ffffff"  # Color of the timer.
 
 WINDOW_TITLE    = "KhobraPy" # Window title.
 
@@ -55,6 +57,8 @@ CLOCK_TICKS     = 7         # How fast the snake moves.
 pygame.init()
 
 clock = pygame.time.Clock()
+
+time_start = datetime.datetime.now()
 
 arena = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -140,6 +144,10 @@ class Snake:
             # Tell the bad news
             pygame.draw.rect(arena, DEAD_HEAD_COLOR, snake.head)
             center_prompt("Game Over", "Press to restart")
+
+            #Reset clock
+            global time_start
+            time_start = datetime.datetime.now()
 
             # Respan the head
             self.x, self.y = GRID_SIZE, GRID_SIZE
@@ -275,6 +283,11 @@ while True:
         snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
         apple = Apple()
 
+    # Show timer (clock)
+    t = datetime.datetime.now()
+    t = t - time_start
+    time_render = SMALL_FONT.render(str(t).split(".")[0], True, TIMER_COLOR)
+    arena.blit(time_render, (0, 0))
 
     # Update display and move clock.
     pygame.display.update()
