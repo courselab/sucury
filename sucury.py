@@ -44,7 +44,7 @@ GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
 SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
 MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
 
-WINDOW_TITLE    = "KhobraPy" # Window title.
+WINDOW_TITLE    = "Sucury" # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
 
