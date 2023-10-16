@@ -272,11 +272,34 @@ def draw_grid():
 def init_cli_parser():
     parser = argparse.ArgumentParser(description="The classic snake game")
 
+    parser.add_argument('--width', default=WIDTH,
+                        help="set window's width",
+                        type=int)
+    parser.add_argument('--height', default=HEIGHT,
+                        help="set window's height",
+                        type=int)
+    parser.add_argument('-g', '--grid-size', default=grid_size,
+                        help="set window's grid size",
+                        type=int)
+
     return parser
+
+###
+### Set args gotten from CLI 
+###
+def set_cli_args(args):
+    global WIDTH
+    global HEIGHT
+    global grid_size
+    
+    WIDTH = args['width']
+    HEIGHT = args['height']
+    grid_size = max(min(args['grid_size'], 100), 10)
 
 if __name__ == "__main__":
     parser = init_cli_parser()
-    args = parser.parse_args()
+    args = vars(parser.parse_args())
+    set_cli_args(args)
 
     ##
     ## Game implementation.
