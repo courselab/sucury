@@ -25,6 +25,7 @@
 
 import pygame
 import random
+import argparse
 import sys
 
 ##
@@ -280,8 +281,18 @@ def draw_grid():
             rect = pygame.Rect(x, y, grid_size, grid_size)
             pygame.draw.rect(arena, GRID_COLOR, rect, 1)
 
+###
+### Init parser to get args from CLI
+###
+def init_cli_parser():
+    parser = argparse.ArgumentParser(description="The classic snake game")
+
+    return parser
 
 if __name__ == "__main__":
+    parser = init_cli_parser()
+    args = parser.parse_args()
+
     score = BIG_FONT.render("1", True, MESSAGE_COLOR)
     score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
