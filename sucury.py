@@ -302,18 +302,20 @@ while True:
 
         # Key pressed
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN or event.key == pygame.K_s:    # Down arrow or S:  move down
-                snake.change_direction(DOWN)
-            elif event.key == pygame.K_UP or event.key == pygame.K_w:    # Up arrow or W:    move up
-                snake.change_direction(UP)
-            elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: # Right arrow or D: move right
-                snake.change_direction(RIGHT)
-            elif event.key == pygame.K_LEFT or event.key == pygame.K_a:  # Left arrow or A:  move left
-                snake.change_direction(LEFT)
-            elif event.key == pygame.K_q:     # Q         : quit game
-                pygame.quit()
-                sys.exit()
-            elif event.key == pygame.K_p:     # S         : pause game
+            if game_on:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:    # Down arrow or S:  move down
+                    snake.change_direction(DOWN)
+                elif event.key == pygame.K_UP or event.key == pygame.K_w:    # Up arrow or W:    move up
+                    snake.change_direction(UP)
+                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: # Right arrow or D: move right
+                    snake.change_direction(RIGHT)
+                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:  # Left arrow or A:  move left
+                    snake.change_direction(LEFT)
+                elif event.key == pygame.K_q:     # Q         : quit game
+                    pygame.quit()
+                    sys.exit()
+
+            if event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
 
     ## Update the game
