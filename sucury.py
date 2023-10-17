@@ -83,6 +83,7 @@ def center_prompt(title, subtitle):
 
    # Wait for a keypres or a game quit event.
 
+    if title == "Pause": return
     while ( event := pygame.event.wait() ):
         if event.type == pygame.KEYDOWN:
             break
@@ -246,6 +247,9 @@ while True:
                 pygame.quit()
                 sys.exit()
             elif event.key == pygame.K_p:     # S         : pause game
+                # if game_on:
+                #     center_prompt("Pause", "Press P to return")
+
                 game_on = not game_on
 
     ## Update the game
@@ -265,6 +269,9 @@ while True:
 
     # Draw head
     pygame.draw.rect(arena, HEAD_COLOR, snake.head)
+
+    if not game_on:
+        center_prompt("Pause", "Press P to return")
 
     # Show score (snake length = head + tail)
     score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
