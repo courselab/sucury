@@ -326,7 +326,7 @@ while True:
                     snake.change_direction(RIGHT)
                 elif event.key == pygame.K_LEFT or event.key == pygame.K_a:  # Left arrow or A:  move left
                     snake.change_direction(LEFT)
-                elif event.key == pygame.K_q:     # Q         : quit game
+                elif event.key in [pygame.K_q, pygame.K_ESCAPE, pygame.K_END]:     # Q | END | ESC         : quit game
                     pygame.quit()
                     sys.exit()
 
