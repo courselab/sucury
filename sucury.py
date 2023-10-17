@@ -39,10 +39,20 @@ HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
 DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
 TAIL_COLOR      = "#00ff00"  # Color of the snake's tail.
 APPLE_COLOR     = "#aa0000"  # Color of the apple.
+BANANA_COLOR    = '#ecf542'  # Color of the banana.
+GRAPE_COLOR     = '#7100c7'  # Color of the grape
 ARENA_COLOR     = "#202020"  # Color of the ground.
 GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
 SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
 MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
+
+APPLE_PROBABILITY = 0.8
+BANANA_PROPABILITY = 0.15
+GRAPE_PROBABILITY = 0.05
+
+APPLE_SCORE = 1
+BANANA_SCORE = 2
+GRAPE_SCORE = 5
 
 WINDOW_TITLE    = "KhobraPy" # Window title.
 
@@ -123,7 +133,7 @@ class Snake:
     # This function is called at each loop interation.
 
     def update(self):
-        global apple
+        global fruit
 
         # Check for border crash.
         if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
@@ -156,7 +166,7 @@ class Snake:
             self.alive = True
 
             # Drop and apple
-            apple = Apple()
+            fruit = Fruit()
 
 
         # Move the snake.
@@ -173,26 +183,36 @@ class Snake:
             self.head.y += self.ymov * GRID_SIZE
 
 ##
-## The apple class.
+## The fruit class.
 ##
 
-class Apple:
+class Fruit:
     def __init__(self):
 
         # Pick a random position within the game arena
         self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
         self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
 
-        # Create an apple at that location
+        # Create an fruit at that location
         self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+
+        p = random.random()
+        if p < APPLE_PROBABILITY:
+            self.color = APPLE_COLOR
+            self.point = APPLE_SCORE
+        elif p < APPLE_PROBABILITY + BANANA_PROPABILITY:
+            self.color = BANANA_COLOR
+            self.point = BANANA_SCORE
+        else:
+            self.color = GRAPE_COLOR
+            self.point = GRAPE_SCORE
 
     # This function is called each interation of the game loop
 
     def update(self):
 
-        # Drop the apple
-        pygame.draw.rect(arena, APPLE_COLOR, self.rect)
-
+        # Drop the fruit based on probability
+        pygame.draw.rect(arena, self.color, self.rect)
 
 ##
 ## Draw the arena
@@ -211,7 +231,7 @@ draw_grid()
 
 snake = Snake()    # The snake
 
-apple = Apple()    # An apple
+fruit = Fruit()    # An fruit
 
 center_prompt("Welcome", "Press to start")
 
@@ -257,7 +277,7 @@ while True:
         arena.fill(ARENA_COLOR)
         draw_grid()
 
-        apple.update()
+        fruit.update()
 
     # Draw the tail
     for square in snake.tail:
@@ -270,10 +290,11 @@ while True:
     score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
     arena.blit(score, score_rect)
 
-    # If the head pass over an apple, lengthen the snake and drop another apple
-    if snake.head.x == apple.x and snake.head.y == apple.y:
-        snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
-        apple = Apple()
+    # If the head pass over an fruit, lengthen the snake and drop another fruit
+    if snake.head.x == fruit.x and snake.head.y == fruit.y:
+        for _ in range(fruit.point): 
+            snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
+        fruit = Fruit()
 
 
     # Update display and move clock.
