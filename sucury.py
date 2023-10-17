@@ -24,6 +24,7 @@
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import pygame
+from button import Button
 import random
 import sys
 
@@ -44,7 +45,7 @@ GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
 SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
 MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
 
-WINDOW_TITLE    = "KhobraPy" # Window title.
+WINDOW_TITLE    = ["KhobraPy - Game", "KhobraPy - Menu"] # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
 
@@ -56,14 +57,54 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
-arena = pygame.display.set_mode((WIDTH, HEIGHT))
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
 SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
 
-pygame.display.set_caption(WINDOW_TITLE)
+pygame.display.set_caption(WINDOW_TITLE[0])
+BG = pygame.image.load("assets/Background.png")
 
 game_on = 1
+
+def main_menu(): #Main Menu Screen
+    pygame.display.set_caption(WINDOW_TITLE[1])
+
+    while True:
+        SCREEN.blit(BG, (0, 0))
+        MENU_MOUSE_POS = pygame.mouse.get_pos()
+        
+        MENU_TEXT = BIG_FONT.render("MAIN MENU", True, "#b68f40")
+        MENU_RECT = MENU_TEXT.get_rect(center=(640, 100))
+
+        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(640, 250), 
+                            text_input="PLAY", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(640, 400), 
+                            text_input="OPTIONS", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+        QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550), 
+                            text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+        SCREEN.blit(MENU_TEXT, MENU_RECT)
+
+        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
+            button.changeColor(MENU_MOUSE_POS)
+            button.update(SCREEN)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    #play()
+                if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    #options()
+                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    pygame.quit()
+                    sys.exit()
+
+        pygame.display.update()
+        
 
 ## This function is called when the snake dies.
 
@@ -93,10 +134,6 @@ def center_prompt(title, subtitle):
         pygame.quit()
         sys.exit()
 
-
-##
-## Snake class
-##
 
 class Snake:
     def __init__(self):
@@ -172,10 +209,6 @@ class Snake:
             self.head.x += self.xmov * GRID_SIZE
             self.head.y += self.ymov * GRID_SIZE
 
-##
-## The apple class.
-##
-
 class Apple:
     def __init__(self):
 
@@ -192,7 +225,6 @@ class Apple:
 
         # Drop the apple
         pygame.draw.rect(arena, APPLE_COLOR, self.rect)
-
 
 ##
 ## Draw the arena
