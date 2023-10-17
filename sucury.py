@@ -56,6 +56,9 @@ RIGHT = (1, 0)
 DOWN = (0, 1)
 LEFT = (-1, 0)
 
+
+progress = 0 # Tracking the player progress along their playthrough
+
 ##
 ## Game implementation.
 ##
@@ -100,6 +103,16 @@ def center_prompt(title, subtitle):
     if event.key == pygame.K_q:          # 'Q' quits game
         pygame.quit()
         sys.exit()
+
+
+def show_progress(snake_length):
+    global progress
+    if snake_length > progress:
+        progress = snake_length
+
+    leaderboard = SMALL_FONT.render(f"Best Score: {progress}", True, SCORE_COLOR)
+    leaderboard_rect = leaderboard.get_rect(center=(WIDTH/2, (3*HEIGHT/20)+HEIGHT/30))
+    arena.blit(leaderboard, leaderboard_rect)
 
 ###
 ### Display the main menu.
@@ -203,6 +216,7 @@ class Snake:
 
             # Tell the bad news
             pygame.draw.rect(arena, DEAD_HEAD_COLOR, snake.head)
+            show_progress(len(self.tail))
             center_prompt("Game Over", "Press to restart")
 
             # Respan the head
@@ -358,7 +372,7 @@ while True:
     # If the head pass over an apple, lengthen the snake and drop another apple
     if snake.head.x == apple.x and snake.head.y == apple.y:
         snake.grow()
-        apple = Apple()
+        apple = Apple()     
 
 
     # Update display and move clock.
