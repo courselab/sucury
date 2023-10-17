@@ -31,7 +31,7 @@ import sys
 ## Game customization.
 ##
 
-WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
+WIDTH, HEIGHT = 650, 650     # Game screen dimensions.
 
 grid_size = 50               # Square grid size.
 
