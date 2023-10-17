@@ -311,9 +311,10 @@ while True:
                 sys.exit()
             elif event.key == pygame.K_p:     # S:           pause game
                 game_on = not game_on
+                if show_color_menu: show_color_menu = False
             elif event.key == pygame.K_c:     # C:           show color menu
                 show_color_menu = not show_color_menu
-                game_on = not game_on
+                game_on = False if show_color_menu else True
 
     ## Update the game
 
@@ -324,6 +325,7 @@ while True:
         draw_grid()
 
         apple.update()
+
 
     # Draw the tail
     for square in snake.tail:
