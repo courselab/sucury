@@ -35,18 +35,37 @@ WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
 GRID_SIZE = 50               # Square grid size.
 
-HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
-DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
-TAIL_COLOR      = "#00ff00"  # Color of the snake's tail.
-APPLE_COLOR     = "#aa0000"  # Color of the apple.
-ARENA_COLOR     = "#202020"  # Color of the ground.
-GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
-SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
-MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
-
 WINDOW_TITLE    = "KhobraPy" # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
+
+# Define color palettes
+COLOR_PALETTES = [
+    {  # Default color palette
+        "HEAD_COLOR": "#00aa00",
+        "DEAD_HEAD_COLOR": "#4b0082",
+        "TAIL_COLOR": "#00ff00",
+        "APPLE_COLOR": "#aa0000",
+        "ARENA_COLOR": "#202020",
+        "GRID_COLOR": "#3c3c3b",
+        "SCORE_COLOR": "#ffffff",
+        "MESSAGE_COLOR": "#808080"
+    },
+    {  # Colorblind-friendly palette 2: Okabe and Ito pallete
+        "HEAD_COLOR": "#379e73",
+        "DEAD_HEAD_COLOR": "#cc79a7",
+        "TAIL_COLOR": "#47c993",
+        "APPLE_COLOR": "#d55e00",
+        "ARENA_COLOR": "#202020",
+        "GRID_COLOR": "#3c3c3b",
+        "SCORE_COLOR": "#ffffff",
+        "MESSAGE_COLOR": "#808080"
+    },
+    # Add more color palettes as needed...
+]
+
+# Initialize current palette index
+current_palette = 0
 
 ##
 ## Game implementation.
@@ -71,11 +90,11 @@ def center_prompt(title, subtitle):
 
     # Show title and subtitle.
 
-    center_title = BIG_FONT.render(title, True, MESSAGE_COLOR)
+    center_title = BIG_FONT.render(title, True, COLOR_PALETTES[current_palette]["MESSAGE_COLOR"])
     center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
     arena.blit(center_title, center_title_rect)
 
-    center_subtitle = SMALL_FONT.render(subtitle, True, MESSAGE_COLOR)
+    center_subtitle = SMALL_FONT.render(subtitle, True, COLOR_PALETTES[current_palette]["MESSAGE_COLOR"])
     center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
     arena.blit(center_subtitle, center_subtitle_rect)
 
@@ -138,7 +157,7 @@ class Snake:
         if not self.alive:
 
             # Tell the bad news
-            pygame.draw.rect(arena, DEAD_HEAD_COLOR, snake.head)
+            pygame.draw.rect(arena, COLOR_PALETTES[current_palette]["DEAD_HEAD_COLOR"], snake.head)
             center_prompt("Game Over", "Press to restart")
 
             # Respan the head
@@ -191,7 +210,7 @@ class Apple:
     def update(self):
 
         # Drop the apple
-        pygame.draw.rect(arena, APPLE_COLOR, self.rect)
+        pygame.draw.rect(arena, COLOR_PALETTES[current_palette]["APPLE_COLOR"], self.rect)
 
 
 ##
@@ -202,9 +221,9 @@ def draw_grid():
     for x in range(0, WIDTH, GRID_SIZE):
         for y in range(0, HEIGHT, GRID_SIZE):
             rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
-            pygame.draw.rect(arena, GRID_COLOR, rect, 1)
+            pygame.draw.rect(arena, COLOR_PALETTES[current_palette]["GRID_COLOR"], rect, 1)
 
-score = BIG_FONT.render("1", True, MESSAGE_COLOR)
+score = BIG_FONT.render("1", True, COLOR_PALETTES[current_palette]["MESSAGE_COLOR"])
 score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
 draw_grid()
@@ -247,6 +266,8 @@ while True:
                 sys.exit()
             elif event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
+            elif event.key == pygame.K_c:     # C         : changes the color palette
+                current_palette = (current_palette + 1) % len(COLOR_PALETTES)
 
     ## Update the game
 
@@ -254,20 +275,20 @@ while True:
 
         snake.update()
 
-        arena.fill(ARENA_COLOR)
+        arena.fill(COLOR_PALETTES[current_palette]["ARENA_COLOR"])
         draw_grid()
 
         apple.update()
 
     # Draw the tail
     for square in snake.tail:
-        pygame.draw.rect(arena, TAIL_COLOR, square)
+        pygame.draw.rect(arena, COLOR_PALETTES[current_palette]["TAIL_COLOR"], square)
 
     # Draw head
-    pygame.draw.rect(arena, HEAD_COLOR, snake.head)
+    pygame.draw.rect(arena, COLOR_PALETTES[current_palette]["HEAD_COLOR"], snake.head)
 
     # Show score (snake length = head + tail)
-    score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
+    score = BIG_FONT.render(f"{len(snake.tail)}", True, COLOR_PALETTES[current_palette]["SCORE_COLOR"])
     arena.blit(score, score_rect)
 
     # If the head pass over an apple, lengthen the snake and drop another apple
