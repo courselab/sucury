@@ -31,7 +31,7 @@ import sys
 ## Game customization.
 ##
 
-WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
+WIDTH, HEIGHT = 600, 600     # Game screen dimensions.
 
 grid_size = 50               # Square grid size.
 
@@ -73,6 +73,57 @@ pygame.display.set_caption(WINDOW_TITLE)
 
 game_on = 1
 
+##
+## Load the highscores from save file
+##
+def load_highscores():
+    highscores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    try:
+        file = open("highscores.sav", "rb")
+    except:
+        return highscores
+
+    highscores = list(file.read(10))
+    file.close()
+    return highscores
+
+##
+## Display the highscore list on screen
+##
+def display_highscore():
+    highscores = load_highscores()
+    highscores.reverse()
+    counter_height = 2
+    counter_width = 1
+
+    arena.fill((0, 0, 0))
+
+    score_text = BIG_FONT.render("Highscores", True, MESSAGE_COLOR)
+    score_text_center = score_text.get_rect(center=(WIDTH / 2, HEIGHT / 14))
+    arena.blit(score_text, score_text_center)
+    for score in highscores:
+        score_text = BIG_FONT.render(str(score), True, MESSAGE_COLOR)
+        score_text_center = score_text.get_rect(center=(WIDTH * counter_width/4, HEIGHT * counter_height/7))
+        arena.blit(score_text, score_text_center)
+        pygame.display.update()
+        if(counter_height < 6):
+            counter_height += 1
+        else:
+            counter_height = 2
+            counter_width = 3
+
+    # Wait for a keypres or a game quit event.
+
+    while (event := pygame.event.wait()):
+        if event.type == pygame.KEYDOWN:
+            break
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    if event.key == pygame.K_q:  # 'Q' quits game
+        pygame.quit()
+        sys.exit()
+
 ## This function is called when the snake dies.
 
 def center_prompt(title, subtitle):
@@ -87,6 +138,10 @@ def center_prompt(title, subtitle):
     center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
     arena.blit(center_subtitle, center_subtitle_rect)
 
+    center_highscore = SMALL_FONT.render("Press 'h' to show highscores", True, MESSAGE_COLOR)
+    center_highscore_rect = center_highscore.get_rect(center=(WIDTH/2, HEIGHT*5/6))
+    arena.blit(center_highscore, center_highscore_rect)
+
     pygame.display.update()
 
    # Wait for a keypres or a game quit event.
@@ -100,6 +155,8 @@ def center_prompt(title, subtitle):
     if event.key == pygame.K_q:          # 'Q' quits game
         pygame.quit()
         sys.exit()
+    elif event.key == pygame.K_h:
+        display_highscore()
 
 ###
 ### Display the main menu.
@@ -201,6 +258,8 @@ class Snake:
         # In the event of death, reset the game arena.
         if not self.alive:
 
+            # Save the highscore
+            save_score(len(self.tail))
             # Tell the bad news
             pygame.draw.rect(arena, DEAD_HEAD_COLOR, snake.head)
             center_prompt("Game Over", "Press to restart")
@@ -276,7 +335,7 @@ class Apple:
         # Create an apple at that location
         self.rect = pygame.Rect(self.x, self.y, grid_size, grid_size)
 
-    # This function is called each interation of the game loop
+    # This function is called each iteration of the game loop
 
     def update(self):
 
@@ -301,6 +360,23 @@ main_menu()
 
 snake = Snake()    # The snake
 apple = Apple()    # An apple
+
+##
+## Save the highscore to file
+##
+def save_score(score):
+
+    highscores = load_highscores()
+
+    if score > highscores[0]:
+        highscores[0] = score
+        highscores.sort()
+        file = open("highscores.sav", "wb")
+        highscores = bytearray(highscores)
+        file.write(highscores)
+        file.close()
+
+
 
 ##
 ## Main loop
