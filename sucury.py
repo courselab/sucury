@@ -23,9 +23,9 @@
 #   You should have received a copy of the GNU General Public License
 #   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import pygame
 import random
 import sys
+import pygame
 
 ##
 ## Game customization.
@@ -63,7 +63,7 @@ SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
 
 pygame.display.set_caption(WINDOW_TITLE)
 
-game_on = 1
+GAME_ON = 1
 
 ## This function is called when the snake dies.
 
@@ -246,11 +246,11 @@ while True:
                 pygame.quit()
                 sys.exit()
             elif event.key == pygame.K_p:     # S         : pause game
-                game_on = not game_on
+                GAME_ON = not GAME_ON
 
     ## Update the game
 
-    if game_on:
+    if GAME_ON:
 
         snake.update()
 
