@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 #
 #   Copyright (c) 2023 by Monaco F. J. <monaco@usp.br>
 #   Copyright (c) 2023 by Sucury Authors
@@ -34,7 +34,7 @@ import sys
 
 WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
-grid_size = 50               # Square grid size.
+GRID_SIZE = 50               # Square grid size.
 
 HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
 DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
@@ -48,14 +48,6 @@ MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
 WINDOW_TITLE    = ["KhobraPy - Game", "KhobraPy - Menu"] # Window title.
 
 CLOCK_TICKS     = 7         # How fast the snake moves.
-
-BLOCK_180_TURNS = True      # Disable 180° turns
-
-# Directions
-UP = (0, -1)
-RIGHT = (1, 0)
-DOWN = (0, 1)
-LEFT = (-1, 0)
 
 ##
 ## Game implementation.
@@ -144,10 +136,109 @@ def center_prompt(title, subtitle):
     if event.key == pygame.K_q:          # 'Q' quits game
         main_menu()
 
-###
-### Display the main menu.
-###
-def main_menu():
+
+class Snake:
+    def __init__(self):
+
+        # Dimension of each snake segment.
+
+        self.x, self.y = GRID_SIZE, GRID_SIZE
+
+        # Initial direction
+        # xmov :  -1 left,    0 still,   1 right
+        # ymov :  -1 up       0 still,   1 dows
+        self.xmov = 1
+        self.ymov = 0
+
+        # The snake has a head segement,
+        self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+
+        # and a tail (array of segments).
+        self.tail = []
+
+        # The snake is born.
+        self.alive = True
+
+    # This function is called at each loop interation.
+
+    def update(self):
+        global apple
+
+        # Check for border crash.
+        if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
+            self.alive = False
+
+        # Check for self-bite.
+        for square in self.tail:
+            if self.head.x == square.x and self.head.y == square.y:
+                self.alive = False
+
+        # In the event of death, reset the game SCREEN.
+        if not self.alive:
+
+            # Tell the bad news
+            pygame.draw.rect(SCREEN, DEAD_HEAD_COLOR, self.head)
+            center_prompt("Game Over", "Press to restart")
+
+            # Respan the head
+            self.x, self.y = GRID_SIZE, GRID_SIZE
+            self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+
+            # Respan the initial tail
+            self.tail = []
+
+            # Initial direction
+            self.xmov = 1 # Right
+            self.ymov = 0 # Still
+
+            # Resurrection
+            self.alive = True
+
+            # Drop and apple
+            apple = Apple()
+
+
+        # Move the snake.
+
+        # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
+        if (self.xmov or self.ymov):
+
+            # Prepend a new segment to tail and then remove the trailing segment.
+            self.tail.insert(0,pygame.Rect(self.head.x, self.head.y, GRID_SIZE, GRID_SIZE))
+            self.tail.pop()
+
+            # Move the head along current direction.
+            self.head.x += self.xmov * GRID_SIZE
+            self.head.y += self.ymov * GRID_SIZE
+
+class Apple:
+    def __init__(self):
+
+        # Pick a random position within the game SCREEN
+        self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
+        self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+
+        # Create an apple at that location
+        self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+
+    # This function is called each interation of the game loop
+
+    def update(self):
+
+        # Drop the apple
+        pygame.draw.rect(SCREEN, APPLE_COLOR, self.rect)
+
+##
+## Draw the SCREEN
+##
+
+def draw_grid():
+    for x in range(0, WIDTH, GRID_SIZE):
+        for y in range(0, HEIGHT, GRID_SIZE):
+            rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
+            pygame.draw.rect(SCREEN, GRID_COLOR, rect, 1)
+
+def grid_resize():
     global grid_size
     # Show title and subtitle.
     center_title = BIG_FONT.render("Welcome", True, MESSAGE_COLOR)
@@ -175,186 +266,15 @@ def main_menu():
             sys.exit()
 
         grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {grid_size}", True, MESSAGE_COLOR)
-        arena.fill(ARENA_COLOR)
+        SCREEN.fill(SCREEN_COLOR)
         draw_grid()
 
 
-        arena.blit(center_title, center_title_rect)
-        arena.blit(center_subtitle, center_subtitle_rect)
-        arena.blit(grid_size_text, grid_size_text_rect)
+        SCREEN.blit(center_title, center_title_rect)
+        SCREEN.blit(center_subtitle, center_subtitle_rect)
+        SCREEN.blit(grid_size_text, grid_size_text_rect)
 
         pygame.display.update()
- 
-##
-## Snake class
-##
-
-
-class Snake:
-    def __init__(self):
-
-        # Dimension of each snake segment.
-
-        self.x, self.y = grid_size, grid_size
-
-        # Initial direction
-        # xmov :  -1 left,    0 still,   1 right
-        # ymov :  -1 up       0 still,   1 dows
-        self.xmov = 1
-        self.ymov = 0
-
-        # previous movement velocity
-        self.last_velocity = (self.xmov, self.ymov)
-
-        # The snake has a head segement,
-        self.head = pygame.Rect(self.x, self.y, grid_size, grid_size)
-
-        # and a tail (array of segments).
-        self.tail = []
-
-        # The snake is born.
-        self.alive = True
-
-        # The snake should grow in the next update.
-        self.should_grow = False
-
-    def change_direction(self, direction: tuple[int, int]):
-        # Remove 1-frame 180 turns that lead to death
-        if BLOCK_180_TURNS and (-self.last_velocity[0], -self.last_velocity[1]) == direction:
-            return
-
-        (self.xmov, self.ymov) = direction
-
-    # This function is called at each loop interation.
-    def update(self):
-        global apple
-
-        # Check for border crash.
-        if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
-            self.alive = False
-
-        # Check for self-bite.
-        for square in self.tail:
-            if self.head.x == square.x and self.head.y == square.y:
-                self.alive = False
-
-
-        # Set the last_velocity, to remove 180° turns.
-        # By assigning it at the end of the frame, removes the possibility
-        # of a multi-input 180° turn
-        self.last_velocity = (self.xmov, self.ymov)
-
-        # In the event of death, reset the game arena.
-        if not self.alive:
-
-            # Tell the bad news
-            pygame.draw.rect(SCREEN, DEAD_HEAD_COLOR, self.head)
-            center_prompt("Game Over", "Press to restart")
-
-            # Respan the head
-            self.x, self.y = grid_size, grid_size
-            self.head = pygame.Rect(self.x, self.y, grid_size, grid_size)
-
-            # Respan the initial tail
-            self.tail = []
-
-            # Initial direction
-            self.xmov = 1 # Right
-            self.ymov = 0 # Still
-
-            # Resurrection
-            self.alive = True
-            self.should_grow = False
-
-            # Drop and apple
-            apple = Apple()
-
-
-        # Move the snake.
-
-        # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
-        if (self.xmov or self.ymov):
-
-            # Prepend a new segment to tail.
-            self.tail.insert(0,pygame.Rect(self.head.x, self.head.y, grid_size, grid_size))
-            
-            # If the snake should grow, keeps the last segment, else removes it.
-            if self.should_grow:
-                self.should_grow = False
-            else:
-                self.tail.pop()
-
-            # Move the head along current direction.
-            self.head.x += self.xmov * grid_size
-            self.head.y += self.ymov * grid_size
-
-    # Sets that the snake should grow on the next update.
-
-    def grow(self):
-        self.should_grow = True
-
-class Apple:
-    def __init__(self):
-
-<<<<<<< HEAD
-        global snake
-        # Pick a random position within the game arena
-        self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
-        self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
-
-        while True: # Keep generating until it's a  valid position
-
-            if (self.x,self.y) == (snake.head.x,snake.head.y): # If it's on top of snake head
-                self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
-                self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
-                continue
-            for segment in snake.tail: # check if it's on top of snake body
-                if (self.x,self.y) == (segment.x,segment.y): 
-                    self.x = int(random.randint(0, WIDTH)/grid_size) * grid_size
-                    self.y = int(random.randint(0, HEIGHT)/grid_size) * grid_size
-                    break
-            else:
-                break
-=======
-        # Pick a random position within the game SCREEN
-        self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
-        self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
->>>>>>> c9fe9cdaf0f162429a4f1b02b5f9b4a61e4b984d
-
-        # Create an apple at that location
-        self.rect = pygame.Rect(self.x, self.y, grid_size, grid_size)
-
-    # This function is called each interation of the game loop
-
-    def update(self):
-
-        # Drop the apple
-        pygame.draw.rect(SCREEN, APPLE_COLOR, self.rect)
-
-##
-## Draw the SCREEN
-##
-
-def draw_grid():
-<<<<<<< HEAD
-    for x in range(0, WIDTH, grid_size):
-        for y in range(0, HEIGHT, grid_size):
-            rect = pygame.Rect(x, y, grid_size, grid_size)
-            pygame.draw.rect(arena, GRID_COLOR, rect, 1)
-
-score = BIG_FONT.render("1", True, MESSAGE_COLOR)
-score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
-
-main_menu()
-
-snake = Snake()    # The snake
-apple = Apple()    # An apple
-=======
-    for x in range(0, WIDTH, GRID_SIZE):
-        for y in range(0, HEIGHT, GRID_SIZE):
-            rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
-            pygame.draw.rect(SCREEN, GRID_COLOR, rect, 1)
->>>>>>> c9fe9cdaf0f162429a4f1b02b5f9b4a61e4b984d
 
 ##
 ## Main loop
@@ -375,38 +295,12 @@ def play():
 
     while True:
 
-<<<<<<< HEAD
-        # Key pressed
-        if event.type == pygame.KEYDOWN:
-            if game_on:
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:    # Down arrow or S:  move down
-                    snake.change_direction(DOWN)
-                elif event.key == pygame.K_UP or event.key == pygame.K_w:    # Up arrow or W:    move up
-                    snake.change_direction(UP)
-                elif event.key == pygame.K_RIGHT or event.key == pygame.K_d: # Right arrow or D: move right
-                    snake.change_direction(RIGHT)
-                elif event.key == pygame.K_LEFT or event.key == pygame.K_a:  # Left arrow or A:  move left
-                    snake.change_direction(LEFT)
-                elif event.key == pygame.K_q:     # Q         : quit game
-                    pygame.quit()
-                    sys.exit()
-
-            if event.key == pygame.K_p:     # S         : pause game
-                game_on = not game_on
-
-    ## Update the game
-
-    if game_on:
-
-        snake.update()
-=======
         for event in pygame.event.get():           # Wait for events
 
         # App terminated
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
->>>>>>> c9fe9cdaf0f162429a4f1b02b5f9b4a61e4b984d
 
             # Key pressed
             if event.type == pygame.KEYDOWN:
@@ -454,22 +348,9 @@ def play():
             snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
             apple = Apple()
 
-<<<<<<< HEAD
-    # If the head pass over an apple, lengthen the snake and drop another apple
-    if snake.head.x == apple.x and snake.head.y == apple.y:
-        snake.grow()
-        apple = Apple()
-=======
->>>>>>> c9fe9cdaf0f162429a4f1b02b5f9b4a61e4b984d
 
         # Update display and move clock.
         pygame.display.update()
         clock.tick(CLOCK_TICKS)
 
-<<<<<<< HEAD
-    # Update display and move clock.
-    pygame.display.update()
-    clock.tick(CLOCK_TICKS)
-=======
 main_menu()
->>>>>>> c9fe9cdaf0f162429a4f1b02b5f9b4a61e4b984d
