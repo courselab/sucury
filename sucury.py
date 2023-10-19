@@ -191,7 +191,7 @@ class Apple:
     def update(self):
 
         # Drop the apple
-        pygame.draw.rect(arena, APPLE_COLOR, self.rect)
+        pygame.draw.ellipse(arena, APPLE_COLOR, self.rect)
 
 
 ##
