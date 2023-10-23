@@ -35,18 +35,23 @@ WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
 GRID_SIZE = 50               # Square grid size.
 
-HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
-DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
-TAIL_COLOR      = "#00ff00"  # Color of the snake's tail.
-APPLE_COLOR     = "#aa0000"  # Color of the apple.
-ARENA_COLOR     = "#202020"  # Color of the ground.
-GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
-SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
-MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
+HEAD_COLOR       = "#00aa00"  # Color of the snake's head.
+DEAD_HEAD_COLOR  = "#4b0082"  # Color of the dead snake's head.
+TAIL_COLOR       = "#00ff00"  # Color of the snake's tail.
+APPLE_COLOR      = "#aa0000"  # Color of the apple.
+ARENA_COLOR      = "#202020"  # Color of the ground.
+GRID_COLOR       = "#3c3c3b"  # Color of the grid lines.
+SCORE_COLOR      = "#ffffff"  # Color of the scoreboard.
+MESSAGE_COLOR    = "#808080"  # Color of the game-over message.
 
-WINDOW_TITLE    = "KhobraPy" # Window title.
+WINDOW_TITLE     = "KhobraPy" # Window title.
 
-CLOCK_TICKS     = 7         # How fast the snake moves.
+CLOCK_TICKS      = 7          # How fast the snake moves.
+
+MIN_SPEED        = 1          # Min Snake Speed
+MAX_SPEED        = 3          # Max Snake Speed
+current_speed    = MIN_SPEED
+can_change_speed = False
 
 ##
 ## Game implementation.
@@ -148,6 +153,10 @@ class Snake:
             # Respan the initial tail
             self.tail = []
 
+            # Reset the speed to the minimum value
+            global current_speed
+            current_speed = MIN_SPEED
+
             # Initial direction
             self.xmov = 1 # Right
             self.ymov = 0 # Still
@@ -247,6 +256,8 @@ while True:
                 sys.exit()
             elif event.key == pygame.K_p:     # S         : pause game
                 game_on = not game_on
+            elif event.key == pygame.K_f:     # F         : disable/enable changing snake speed
+                can_change_speed = not can_change_speed
 
     ## Update the game
 
@@ -273,9 +284,11 @@ while True:
     # If the head pass over an apple, lengthen the snake and drop another apple
     if snake.head.x == apple.x and snake.head.y == apple.y:
         snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
+        if can_change_speed:
+            current_speed += 0.1
         apple = Apple()
 
 
     # Update display and move clock.
     pygame.display.update()
-    clock.tick(CLOCK_TICKS)
+    clock.tick(CLOCK_TICKS * current_speed)
