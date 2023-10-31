@@ -185,23 +185,23 @@ def controls():
         LEFT_RECT = LEFT_TEXT.get_rect(center=(WIDTH/2 - WIDTH/5, 2*HEIGHT/7))
         
         #Button to personalise the left key.
-        GET_LEFT_KEY = Button(image=pygame.image.load("assets/Personalise Rect.png"), pos=(WIDTH/2 + WIDTH/5,2*HEIGHT/7), 
-                             text_input="PERSONALISE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+        GET_LEFT_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,2*HEIGHT/7), 
+                             text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
 
         RIGHT_TEXT = SMALL_FONT.render("RIGHT:", True, "White")
         RIGHT_RECT = RIGHT_TEXT.get_rect(center=(WIDTH/2 - WIDTH/5, 3*HEIGHT/7))
         
         #Button to personalise the right key.
-        GET_RIGHT_KEY = Button(image=pygame.image.load("assets/Personalise Rect.png"), pos=(WIDTH/2 + WIDTH/5,3*HEIGHT/7), 
-                              text_input="PERSONALISE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+        GET_RIGHT_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,3*HEIGHT/7), 
+                              text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
 
 
         UP_TEXT = SMALL_FONT.render("UP:", True, "White")
         UP_RECT = UP_TEXT.get_rect(center=(WIDTH/2 - WIDTH/5, 4*HEIGHT/7))
 
         #Button to personalise the up key.
-        GET_UP_KEY = Button(image=pygame.image.load("assets/Personalise Rect.png"), pos=(WIDTH/2 + WIDTH/5,4*HEIGHT/7), 
-                           text_input="PERSONALISE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+        GET_UP_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,4*HEIGHT/7), 
+                           text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
  
 
         DOWN_TEXT = SMALL_FONT.render("DOWN:", True, "White")
@@ -209,8 +209,8 @@ def controls():
 
 
         #Button to personalise the down key.
-        GET_DOWN_KEY = Button(image=pygame.image.load("assets/Personalise Rect.png"), pos=(WIDTH/2 + WIDTH/5,5*HEIGHT/7), 
-                             text_input="PERSONALISE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+        GET_DOWN_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,5*HEIGHT/7), 
+                             text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
 
 
         #Button to go back to "Options" screen.
