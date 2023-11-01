@@ -32,6 +32,17 @@ import sys
 ## Game customization.
 ##
 
+
+    ##
+    ## DEFAULT GAME CONTROLS
+    ##
+left_key = pygame.K_LEFT
+right_key = pygame.K_RIGHT
+up_key = pygame.K_UP
+down_key = pygame.K_DOWN
+pause_key = pygame.K_p
+quit_key = pygame.K_q
+
 WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
 GRID_SIZE = 50               # Square grid size.
@@ -108,8 +119,159 @@ def main_menu(): #Main Menu Screen
 
         pygame.display.update()
 
+
+##
+## This is the "options" screen.
+##
 def options():
-    return
+    while True:
+        SCREEN.blit(BG, (0, 0))
+        OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
+
+        OPTIONS_TEXT = BIG_FONT.render("OPTIONS", True, "#b68f40")
+        OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(WIDTH/2, HEIGHT/5))
+
+        #Button to the "Controls" screen.
+        CONTROLS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(WIDTH/2, HEIGHT/2.5), 
+                                 text_input="CONTROLS", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+        #Button to get you back to "Menu" screen.
+        BACK_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(WIDTH/2, HEIGHT/1.2), 
+                             text_input="BACK", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+        #Draws the text on the screen.
+        SCREEN.blit(OPTIONS_TEXT, OPTIONS_RECT)
+
+        #Get updates from the buttons.
+        for button in [CONTROLS_BUTTON, BACK_BUTTON]:
+            button.changeColor(OPTIONS_MOUSE_POS)
+            button.update(SCREEN)
+
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+            #Checks if a button was pressed.
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                #Calls the "Controls" screen.
+                if CONTROLS_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
+                    controls()
+                
+                #Go back to "Menu" screen.
+                if BACK_BUTTON.checkForInput(OPTIONS_MOUSE_POS):
+                    return
+        pygame.display.update()
+
+
+
+##
+## This is the "controls" screen.
+##
+def controls():
+     #Get the keys that are defined globally
+     global left_key
+     global right_key
+     global up_key
+     global down_key
+    
+     while True:
+        SCREEN.blit(BG, (0, 0))
+        CONTROLS_MOUSE_POS = pygame.mouse.get_pos()
+ 
+        CONTROLS_TEXT = BIG_FONT.render("CONTROLS", True, "#b68f40")
+        CONTROLS_RECT = CONTROLS_TEXT.get_rect(center=(WIDTH/2, HEIGHT/8))
+
+        LEFT_TEXT = SMALL_FONT.render("LEFT:", True, "White")
+        LEFT_RECT = LEFT_TEXT.get_rect(center=(WIDTH/2 - WIDTH/5, 2*HEIGHT/7))
+        
+        #Button to personalise the left key.
+        GET_LEFT_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,2*HEIGHT/7), 
+                             text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+        RIGHT_TEXT = SMALL_FONT.render("RIGHT:", True, "White")
+        RIGHT_RECT = RIGHT_TEXT.get_rect(center=(WIDTH/2 - WIDTH/5, 3*HEIGHT/7))
+        
+        #Button to personalise the right key.
+        GET_RIGHT_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,3*HEIGHT/7), 
+                              text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+
+        UP_TEXT = SMALL_FONT.render("UP:", True, "White")
+        UP_RECT = UP_TEXT.get_rect(center=(WIDTH/2 - WIDTH/5, 4*HEIGHT/7))
+
+        #Button to personalise the up key.
+        GET_UP_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,4*HEIGHT/7), 
+                           text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+ 
+
+        DOWN_TEXT = SMALL_FONT.render("DOWN:", True, "White")
+        DOWN_RECT = DOWN_TEXT.get_rect(center=(WIDTH/2 - WIDTH/5, 5*HEIGHT/7))
+
+
+        #Button to personalise the down key.
+        GET_DOWN_KEY = Button(image=pygame.image.load("assets/Personalize Rect.png"), pos=(WIDTH/2 + WIDTH/5,5*HEIGHT/7), 
+                             text_input="PERSONALIZE", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+
+        #Button to go back to "Options" screen.
+        BACK_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(WIDTH/2, HEIGHT/1.1), 
+                            text_input="BACK", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+
+
+        #Draws the text's in the screen.
+        SCREEN.blit(CONTROLS_TEXT, CONTROLS_RECT)
+        SCREEN.blit(LEFT_TEXT, LEFT_RECT)
+        SCREEN.blit(RIGHT_TEXT, RIGHT_RECT)
+        SCREEN.blit(UP_TEXT, UP_RECT)
+        SCREEN.blit(DOWN_TEXT, DOWN_RECT)
+
+        #Get updates of the buttons.
+        for button in [GET_LEFT_KEY, GET_RIGHT_KEY, GET_UP_KEY, GET_DOWN_KEY, BACK_BUTTON]:
+            button.changeColor(CONTROLS_MOUSE_POS)
+            button.update(SCREEN)
+
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            
+            #If a button is pressed.
+            if event.type == pygame.MOUSEBUTTONDOWN:
+
+                #Changes the left key.
+                if (GET_LEFT_KEY.checkForInput(CONTROLS_MOUSE_POS)):
+                    left_key = get_key()
+               
+                #Changes the right key.
+                if GET_RIGHT_KEY.checkForInput(CONTROLS_MOUSE_POS):
+                    right_key = get_key()
+
+                #Changes the up key.    
+                if GET_UP_KEY.checkForInput(CONTROLS_MOUSE_POS):
+                    up_key = get_key()
+                
+                #Changes the down key.
+                if GET_DOWN_KEY.checkForInput(CONTROLS_MOUSE_POS):
+                    down_key = get_key()
+
+                #Go back to "Options" screen
+                if BACK_BUTTON.checkForInput(CONTROLS_MOUSE_POS):
+                    return
+        pygame.display.update()
+
+
+
+## This function waits until the user press a key and then return what it pressed.
+def get_key():
+    while (event := pygame.event.wait()):
+        if event.type == pygame.KEYDOWN:
+            break
+    return event.key
+
 
 ## This function is called when the snake dies.
 
@@ -135,7 +297,7 @@ def center_prompt(title, subtitle):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-    if event.key == pygame.K_q:          # 'Q' quits game
+    if event.key == quit_key:          # 'Q' quits game
         main_menu()
 
 
@@ -322,21 +484,21 @@ def play():
 
             # Key pressed
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN:    # Down arrow:  move down
+                if event.key == down_key:    # Down arrow:  move down
                     snake.ymov = 1
                     snake.xmov = 0
-                elif event.key == pygame.K_UP:    # Up arrow:    move up
+                elif event.key == up_key:    # Up arrow:    move up
                     snake.ymov = -1
                     snake.xmov = 0
-                elif event.key == pygame.K_RIGHT: # Right arrow: move right
+                elif event.key == right_key: # Right arrow: move right
                     snake.ymov = 0
                     snake.xmov = 1
-                elif event.key == pygame.K_LEFT:  # Left arrow:  move left
+                elif event.key == left_key:  # Left arrow:  move left
                     snake.ymov = 0
                     snake.xmov = -1
-                elif event.key == pygame.K_q:     # Q         : quit game
+                elif event.key == quit_key:     # Q         : quit game
                     main_menu()
-                elif event.key == pygame.K_p:     # S         : pause game
+                elif event.key == pause_key:     # S         : pause game
                     game_on = not game_on
 
         ## Update the game
