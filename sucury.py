@@ -63,6 +63,7 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
 SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
+COLOR_MENU_FONT = pygame.font.Font("assets/font/GochiHand.ttf", int(WIDTH/20))
 
 pygame.display.set_caption(WINDOW_TITLE[0])
 BG = pygame.image.load("assets/Background.jpg")
@@ -105,7 +106,7 @@ def main_menu(): #Main Menu Screen
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
-
+                    
         pygame.display.update()
 
 def options():
@@ -169,6 +170,10 @@ class Snake:
 
         # The snake is born.
         self.alive = True
+
+        # Default snake colors
+        self.head_color = HEAD_COLOR
+        self.tail_color = TAIL_COLOR
 
     # This function is called at each loop interation.
 
@@ -246,6 +251,42 @@ class Apple:
         pygame.draw.rect(SCREEN, APPLE_COLOR, self.rect)
 
 ##
+## The color picker class.
+##
+
+class ColorPicker:
+    def __init__(self, center, width, height):
+        x, y = center 
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height))
+        self.image.fill(SCREEN_COLOR)
+        self.rad = height // 2
+        self.pwidth = width - self.rad*2
+        for i in range(self.pwidth):    # Filling gradient
+            color = pygame.Color(0)
+            color.hsla = (int(360*i/self.pwidth), 100, 50, 100)
+            pygame.draw.rect(self.image, color, (i + self.rad, height // 3, 1, height - 2*height//3))
+        self.pos = 0
+
+    def get_color(self):
+        color = pygame.Color(0)
+        color.hsla = (int(self.pos * self.pwidth), 100, 50, 100)
+        return color
+
+    def update(self):
+        mouse_buttons = pygame.mouse.get_pressed()
+        mouse_pos = pygame.mouse.get_pos()
+        if mouse_buttons[0] and self.rect.collidepoint(mouse_pos):
+            self.pos = (mouse_pos[0] - self.rect.left - self.rad) / self.pwidth
+            self.pos = max(0, min(self.pos, 1))
+    
+    def draw(self, surf):
+        surf.blit(self.image, self.rect)
+        center = self.rect.left + self.rad + self.pos * self.pwidth, self.rect.centery
+        pygame.draw.circle(surf, self.get_color(), center, self.rect.height // 4)
+
+
+##
 ## Draw the SCREEN
 ##
 
@@ -296,10 +337,29 @@ def grid_resize():
         pygame.display.update()
 
 ##
+## Draw the color menu
+##
+
+def draw_color_menu(menu_text, color_picker, center):
+    global SCREEN
+
+    # Rendering text
+    menu = COLOR_MENU_FONT.render(menu_text, True, SCORE_COLOR)
+    menu_rect = menu.get_rect(center=center)
+    pygame.draw.rect(SCREEN, SCREEN_COLOR, menu_rect)
+    SCREEN.blit(menu, menu_rect)
+
+    # Rendering color picker
+    color_picker.update()
+    color_picker.draw(SCREEN)
+
+##
 ## Main loop
 ##
 def play():
     game_on = 1
+    show_color_menu = False
+
     SCREEN.fill("black")
     
     draw_grid()
@@ -315,6 +375,9 @@ def play():
 
     best_score = SMALL_FONT.render("1", True, MESSAGE_COLOR)
     best_score_rect = best_score.get_rect(center=(WIDTH/2, HEIGHT/2+HEIGHT/3))
+
+    head_color_picker = ColorPicker((WIDTH/4, HEIGHT/3), 400, 60)
+    tail_color_picker = ColorPicker((WIDTH/4, HEIGHT/1.7), 400, 60)
 
     #center_prompt("Welcome", "Press to start")
 
@@ -345,6 +408,10 @@ def play():
                     main_menu()
                 elif event.key == pygame.K_p:     # S         : pause game
                     game_on = not game_on
+                    if show_color_menu: show_color_menu = False
+                elif event.key == pygame.K_c:     # C:           show color menu
+                    show_color_menu = not show_color_menu
+                    game_on = False if show_color_menu else True
 
         ## Update the game
 
@@ -363,10 +430,10 @@ def play():
 
         # Draw the tail
         for square in snake.tail:
-            pygame.draw.rect(SCREEN, TAIL_COLOR, square)
+            pygame.draw.rect(SCREEN, snake.tail_color, square)
 
         # Draw head
-        pygame.draw.rect(SCREEN, HEAD_COLOR, snake.head)
+        pygame.draw.rect(SCREEN, snake.head_color, snake.head)
 
         score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
         SCREEN.blit(score, score_rect)
@@ -380,6 +447,15 @@ def play():
         if snake.head.x == apple.x and snake.head.y == apple.y:
             snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
             apple = Apple()
+
+
+        if show_color_menu:
+            draw_color_menu("HEAD COLOR", head_color_picker, (WIDTH/2, HEIGHT/3 - 60))
+            snake.head_color = head_color_picker.get_color()
+
+            draw_color_menu("TAIL COLOR", tail_color_picker, (WIDTH/2, HEIGHT/1.7 - 60))
+            snake.tail_color = tail_color_picker.get_color()
+
 
 
         # Update display and move clock.
