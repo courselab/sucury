@@ -138,7 +138,6 @@ def center_prompt(title, subtitle):
     if event.key == pygame.K_q:          # 'Q' quits game
         main_menu()
 
-
 class Snake:
     def __init__(self):
 
@@ -256,11 +255,13 @@ def draw_grid():
             rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
             pygame.draw.rect(SCREEN, GRID_COLOR, rect, 1)
 
+
 def grid_resize():
     global grid_size
     # Show title and subtitle.
     center_title = BIG_FONT.render("Welcome", True, MESSAGE_COLOR)
     center_title_rect = center_title.get_rect(center=(WIDTH/2, HEIGHT/2))
+
     center_subtitle = SMALL_FONT.render("Press to Start.", True, MESSAGE_COLOR)
     center_subtitle_rect = center_subtitle.get_rect(center=(WIDTH/2, HEIGHT*2/3))
     
@@ -348,7 +349,7 @@ def play():
         ## Update the game
 
         if game_on:
-
+          
             # If the player gets a new record
             if(len(snake.tail) > best_score_num):
                 best_score_num = len(snake.tail)
@@ -373,6 +374,7 @@ def play():
         # Show the best score in the run until the end of the current game
         best_score = SMALL_FONT.render(f"Best score: {best_score_num}", True, SCORE_COLOR)
         SCREEN.blit(best_score, best_score_rect)
+
 
         # If the head pass over an apple, lengthen the snake and drop another apple
         if snake.head.x == apple.x and snake.head.y == apple.y:
