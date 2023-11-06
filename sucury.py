@@ -138,7 +138,6 @@ def center_prompt(title, subtitle):
     if event.key == pygame.K_q:          # 'Q' quits game
         main_menu()
 
-
 class Snake:
     def __init__(self):
 
@@ -256,6 +255,7 @@ def draw_grid():
             rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
             pygame.draw.rect(SCREEN, GRID_COLOR, rect, 1)
 
+
 def grid_resize():
     global grid_size
     # Show title and subtitle.
@@ -285,6 +285,7 @@ def grid_resize():
 
         grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {grid_size}", True, MESSAGE_COLOR)
         SCREEN.fill(SCREEN_COLOR)
+
         draw_grid()
 
 
@@ -309,6 +310,12 @@ def play():
     snake = Snake()    # The snake
 
     apple = Apple()    # An apple
+
+    best_score_num = 0 # Best score in the run
+
+    best_score = SMALL_FONT.render("1", True, MESSAGE_COLOR)
+    best_score_rect = best_score.get_rect(center=(WIDTH/2, HEIGHT/2+HEIGHT/3))
+
     #center_prompt("Welcome", "Press to start")
 
     while True:
@@ -342,6 +349,10 @@ def play():
         ## Update the game
 
         if game_on:
+          
+            # If the player gets a new record
+            if(len(snake.tail) > best_score_num):
+                best_score_num = len(snake.tail)
 
             snake.update()
 
@@ -357,9 +368,13 @@ def play():
         # Draw head
         pygame.draw.rect(SCREEN, HEAD_COLOR, snake.head)
 
-        # Show score (snake length = head + tail)
         score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
         SCREEN.blit(score, score_rect)
+        
+        # Show the best score in the run until the end of the current game
+        best_score = SMALL_FONT.render(f"Best score: {best_score_num}", True, SCORE_COLOR)
+        SCREEN.blit(best_score, best_score_rect)
+
 
         # If the head pass over an apple, lengthen the snake and drop another apple
         if snake.head.x == apple.x and snake.head.y == apple.y:
