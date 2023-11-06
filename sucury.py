@@ -106,7 +106,7 @@ def main_menu(): #Main Menu Screen
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
-
+                    
         pygame.display.update()
 
 def options():
@@ -455,6 +455,7 @@ def play():
 
             draw_color_menu("TAIL COLOR", tail_color_picker, (WIDTH/2, HEIGHT/1.7 - 60))
             snake.tail_color = tail_color_picker.get_color()
+
 
 
         # Update display and move clock.
