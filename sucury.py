@@ -360,6 +360,6 @@ def play():
 
         # Update display and move clock.
         pygame.display.update()
-        clock.tick(CLOCK_TICKS)
+        clock.tick(CLOCK_TICKS+snake.speed)
 
 main_menu()
