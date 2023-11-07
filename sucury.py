@@ -165,9 +165,12 @@ class Snake:
         # The snake has a head segement,
         self.head = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
 
+
         # and a tail (array of segments).
         self.tail = []
 
+        # initial increase of speed
+        self.speed = 0
         # The snake is born.
         self.alive = True
 
@@ -213,6 +216,8 @@ class Snake:
                 self.xmov = 1
                 self.ymov = 0
 
+            # Reset increase of speed
+            self.speed = 0
             # Resurrection
             self.alive = True
 
@@ -447,6 +452,10 @@ def play():
         if snake.head.x == apple.x and snake.head.y == apple.y:
             snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
             apple = Apple()
+            
+            
+        # Increase speed in 1 unit for every score multiple of 5
+        snake.speed = int(len(snake.tail)/5)
 
 
         if show_color_menu:
@@ -460,6 +469,6 @@ def play():
 
         # Update display and move clock.
         pygame.display.update()
-        clock.tick(CLOCK_TICKS)
+        clock.tick(CLOCK_TICKS+snake.speed)
 
 main_menu()
