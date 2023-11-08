@@ -168,6 +168,9 @@ class Snake:
         # and a tail (array of segments).
         self.tail = []
 
+        # The should grow or not on the next update
+        self.should_grow = False
+
         # The snake is born.
         self.alive = True
 
@@ -215,6 +218,7 @@ class Snake:
 
             # Resurrection
             self.alive = True
+            self.should_grow = False
 
             # Drop and apple
             apple = Apple()
@@ -225,13 +229,23 @@ class Snake:
         # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
         if (self.xmov or self.ymov):
 
-            # Prepend a new segment to tail and then remove the trailing segment.
+            # Prepend a new segment to tail.
             self.tail.insert(0,pygame.Rect(self.head.x, self.head.y, GRID_SIZE, GRID_SIZE))
-            self.tail.pop()
+
+            # If the snake should grow, keeps the last segment, else removes it.
+            if self.should_grow:
+                self.should_grow = False
+            else:
+                self.tail.pop()
 
             # Move the head along current direction.
             self.head.x += self.xmov * GRID_SIZE
             self.head.y += self.ymov * GRID_SIZE
+
+    # Sets that the snake should grow on the next update.
+
+    def grow(self):
+        self.should_grow = True
 
 class Apple:
     def __init__(self):
@@ -445,7 +459,7 @@ def play():
 
         # If the head pass over an apple, lengthen the snake and drop another apple
         if snake.head.x == apple.x and snake.head.y == apple.y:
-            snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
+            snake.grow()
             apple = Apple()
 
 
