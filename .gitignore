@@ -167,3 +167,4 @@ cython_debug/
 # Visual Studio Code
 .vscode/
 
+highscores.sav
