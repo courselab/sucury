@@ -61,8 +61,8 @@ clock = pygame.time.Clock()
 
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
-BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
-SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
+BIG_FONT   = pygame.font.Font("assets/font/prstart.ttf", int(WIDTH/10))
+SMALL_FONT = pygame.font.Font("assets/font/prstart.ttf", int(WIDTH/20))
 COLOR_MENU_FONT = pygame.font.Font("assets/font/GochiHand.ttf", int(WIDTH/20))
 
 pygame.display.set_caption(WINDOW_TITLE[0])
