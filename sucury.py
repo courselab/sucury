@@ -388,7 +388,7 @@ def play():
     best_score_num = 0 # Best score in the run
 
     best_score = SMALL_FONT.render("1", True, MESSAGE_COLOR)
-    best_score_rect = best_score.get_rect(center=(WIDTH/2, HEIGHT/2+HEIGHT/3))
+    best_score_rect = best_score.get_rect(center=(WIDTH/3, HEIGHT/2+HEIGHT/3))
 
     head_color_picker = ColorPicker((WIDTH/4, HEIGHT/3), 400, 60)
     tail_color_picker = ColorPicker((WIDTH/4, HEIGHT/1.7), 400, 60)
