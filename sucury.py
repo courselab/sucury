@@ -406,19 +406,21 @@ def play():
 
             # Key pressed
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_DOWN  and snake.ymov == 0:    # Down arrow:  move down
-                    snake.ymov = 1
-                    snake.xmov = 0
-                elif event.key == pygame.K_UP  and snake.ymov == 0:    # Up arrow:    move up
-                    snake.ymov = -1
-                    snake.xmov = 0
-                elif event.key == pygame.K_RIGHT and snake.xmov == 0: # Right arrow: move right
-                    snake.ymov = 0
-                    snake.xmov = 1
-                elif event.key == pygame.K_LEFT and snake.xmov == 0:  # Left arrow:  move left
-                    snake.ymov = 0
-                    snake.xmov = -1
-                elif event.key == pygame.K_q:     # Q         : quit game
+                if game_on:
+                    if event.key == pygame.K_DOWN  and snake.ymov == 0:    # Down arrow:  move down
+                        snake.ymov = 1
+                        snake.xmov = 0
+                    elif event.key == pygame.K_UP  and snake.ymov == 0:    # Up arrow:    move up
+                        snake.ymov = -1
+                        snake.xmov = 0
+                    elif event.key == pygame.K_RIGHT and snake.xmov == 0: # Right arrow: move right
+                        snake.ymov = 0
+                        snake.xmov = 1
+                    elif event.key == pygame.K_LEFT and snake.xmov == 0:  # Left arrow:  move left
+                        snake.ymov = 0
+                        snake.xmov = -1
+                    
+                if event.key == pygame.K_q:     # Q         : quit game
                     main_menu()
                 elif event.key == pygame.K_p:     # S         : pause game
                     game_on = not game_on
