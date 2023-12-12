@@ -239,7 +239,7 @@ def main():
     ##
 
     while True:
-
+ 
         for event in pygame.event.get():         # Wait for events
 
         # App terminated
