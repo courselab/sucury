@@ -240,7 +240,7 @@ def main():
 
     while True:
 
-        for event in pygame.event.get():           # Wait for events
+        for event in pygame.event.get():         # Wait for events
 
         # App terminated
             if event.type == pygame.QUIT:
