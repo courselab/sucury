@@ -39,14 +39,15 @@ HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
 DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
 TAIL_COLOR      = "#00ff00"  # Color of the snake's tail.
 APPLE_COLOR     = "#aa0000"  # Color of the apple.
+PEAR_COLOR      = "#91aa00"  # Color of the pear.
+BLUEBERRY_COLOR = "#000eaa"  # Color of the blueberry.
+ORANGE_COLOR    = "#cc6f04"  # Color of the orange.
 ARENA_COLOR     = "#202020"  # Color of the ground.
 GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
 SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
 MESSAGE_COLOR   = "#808080"  # Color of the game-over message.
 
-WINDOW_TITLE    = "KhobraPy" # Window title.
-
-CLOCK_TICKS     = 7         # How fast the snake moves.
+WINDOW_TITLE    = "Sucury"   # Window title.
 
 ##
 ## Game implementation.
@@ -62,8 +63,6 @@ BIG_FONT   = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/8))
 SMALL_FONT = pygame.font.Font("assets/font/Ramasuri.ttf", int(WIDTH/20))
 
 pygame.display.set_caption(WINDOW_TITLE)
-
-game_on = 1
 
 ## This function is called when the snake dies.
 
@@ -81,7 +80,7 @@ def center_prompt(title, subtitle):
 
     pygame.display.update()
 
-   # Wait for a keypres or a game quit event.
+   # Wait for a keypress or a game quit event.
 
     while ( event := pygame.event.wait() ):
         if event.type == pygame.KEYDOWN:
@@ -123,7 +122,7 @@ class Snake:
     # This function is called at each loop interation.
 
     def update(self):
-        global apple
+        global fruit
 
         # Check for border crash.
         if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
@@ -138,7 +137,7 @@ class Snake:
         if not self.alive:
 
             # Tell the bad news
-            pygame.draw.rect(arena, DEAD_HEAD_COLOR, snake.head)
+            pygame.draw.rect(arena, DEAD_HEAD_COLOR, self.head)
             center_prompt("Game Over", "Press to restart")
 
             # Respan the head
@@ -155,8 +154,9 @@ class Snake:
             # Resurrection
             self.alive = True
 
-            # Drop and apple
-            apple = Apple()
+            # Drop a fruit
+            fruit = Fruit()
+            fruit.update()
 
 
         # Move the snake.
@@ -173,27 +173,43 @@ class Snake:
             self.head.y += self.ymov * GRID_SIZE
 
 ##
-## The apple class.
+## The fruit class.
 ##
 
-class Apple:
+class Fruit:
     def __init__(self):
 
         # Pick a random position within the game arena
         self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
         self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
 
-        # Create an apple at that location
+        # Create an fruit at that location
         self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+
+        self.type = random.randint(0, 3)
 
     # This function is called each interation of the game loop
 
-    def update(self):
+    def update(self, CLOCK_TICKS=6):
 
-        # Drop the apple
-        pygame.draw.rect(arena, APPLE_COLOR, self.rect)
+        # Drop the fruit
+        # Apple maintains snake's speed
+        if self.type == 0:
+            pygame.draw.rect(arena, APPLE_COLOR, self.rect)
 
+        # Pear increases snake's speed
+        elif self.type == 1:
+            pygame.draw.rect(arena, PEAR_COLOR, self.rect)
 
+        # Blueberry decreases snake's speed
+        elif self.type == 2:
+            pygame.draw.rect(arena, BLUEBERRY_COLOR, self.rect)
+
+        # Orange makes snake grow 2 segments
+        elif self.type == 3:
+            pygame.draw.rect(arena, ORANGE_COLOR, self.rect)
+
+        print(self.type, CLOCK_TICKS)
 ##
 ## Draw the arena
 ##
@@ -204,78 +220,90 @@ def draw_grid():
             rect = pygame.Rect(x, y, GRID_SIZE, GRID_SIZE)
             pygame.draw.rect(arena, GRID_COLOR, rect, 1)
 
-score = BIG_FONT.render("1", True, MESSAGE_COLOR)
-score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
+def main():
+    game_on = True
+    CLOCK_TICKS = 6           # How fast the snake moves.
+    score = BIG_FONT.render("1", True, MESSAGE_COLOR)
+    score_rect = score.get_rect(center=(WIDTH/2, HEIGHT/20+HEIGHT/30))
 
-draw_grid()
+    draw_grid()
 
-snake = Snake()    # The snake
+    snake = Snake()    # The snake
 
-apple = Apple()    # An apple
+    fruit = Fruit()    # A fruit
 
-center_prompt("Welcome", "Press to start")
+    center_prompt("Welcome", "Press to start")
 
-##
-## Main loop
-##
+    ##
+    ## Main loop
+    ##
 
-while True:
+    while True:
 
-    for event in pygame.event.get():           # Wait for events
+        for event in pygame.event.get():           # Wait for events
 
-       # App terminated
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit()
-
-          # Key pressed
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_DOWN:    # Down arrow:  move down
-                snake.ymov = 1
-                snake.xmov = 0
-            elif event.key == pygame.K_UP:    # Up arrow:    move up
-                snake.ymov = -1
-                snake.xmov = 0
-            elif event.key == pygame.K_RIGHT: # Right arrow: move right
-                snake.ymov = 0
-                snake.xmov = 1
-            elif event.key == pygame.K_LEFT:  # Left arrow:  move left
-                snake.ymov = 0
-                snake.xmov = -1
-            elif event.key == pygame.K_q:     # Q         : quit game
+        # App terminated
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.key == pygame.K_p:     # S         : pause game
-                game_on = not game_on
 
-    ## Update the game
+            # Key pressed
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:    # Down arrow:  move down
+                    snake.ymov = 1
+                    snake.xmov = 0
+                elif event.key == pygame.K_UP:    # Up arrow:    move up
+                    snake.ymov = -1
+                    snake.xmov = 0
+                elif event.key == pygame.K_RIGHT: # Right arrow: move right
+                    snake.ymov = 0
+                    snake.xmov = 1
+                elif event.key == pygame.K_LEFT:  # Left arrow:  move left
+                    snake.ymov = 0
+                    snake.xmov = -1
+                elif event.key == pygame.K_q:     # Q         : quit game
+                    pygame.quit()
+                    sys.exit()
+                elif event.key == pygame.K_p:     # S         : pause game
+                    game_on = not game_on
 
-    if game_on:
+        ## Update the game
 
-        snake.update()
+        if game_on:
 
-        arena.fill(ARENA_COLOR)
-        draw_grid()
+            snake.update()
 
-        apple.update()
+            arena.fill(ARENA_COLOR)
+            draw_grid()
 
-    # Draw the tail
-    for square in snake.tail:
-        pygame.draw.rect(arena, TAIL_COLOR, square)
+            fruit.update(CLOCK_TICKS)
 
-    # Draw head
-    pygame.draw.rect(arena, HEAD_COLOR, snake.head)
+        # Draw the tail
+        for square in snake.tail:
+            pygame.draw.rect(arena, TAIL_COLOR, square)
 
-    # Show score (snake length = head + tail)
-    score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
-    arena.blit(score, score_rect)
+        # Draw head
+        pygame.draw.rect(arena, HEAD_COLOR, snake.head)
 
-    # If the head pass over an apple, lengthen the snake and drop another apple
-    if snake.head.x == apple.x and snake.head.y == apple.y:
-        snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
-        apple = Apple()
+        # Show score (snake length = head + tail)
+        score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
+        arena.blit(score, score_rect)
+
+        # If the head pass over an fruit, lengthen the snake and drop another fruit
+        if snake.head.x == fruit.x and snake.head.y == fruit.y:
+            snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
+            if fruit.type == 1:
+                CLOCK_TICKS += 1 if CLOCK_TICKS < 12 else 0
+            elif fruit.type == 2:
+                CLOCK_TICKS -= 1 if CLOCK_TICKS > 2 else 0
+            elif fruit.type == 3:
+                snake.tail.append(pygame.Rect(snake.head.x, snake.head.x, GRID_SIZE, GRID_SIZE))
+            fruit = Fruit()
 
 
-    # Update display and move clock.
-    pygame.display.update()
-    clock.tick(CLOCK_TICKS)
+        # Update display and move clock.
+        pygame.display.update()
+        clock.tick(CLOCK_TICKS)
+
+if __name__ == "__main__":
+    main()
