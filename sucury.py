@@ -262,7 +262,7 @@ def main():
                     snake.ymov = 0
                     snake.xmov = -1
                 elif event.key == pygame.K_q:     # Q         : quit game
-                    pygame.quit()
+                    pygame.quit() 
                     sys.exit()
                 elif event.key == pygame.K_p:     # S         : pause game
                     game_on = not game_on
