@@ -95,6 +95,9 @@ def main_menu(): #Main Menu Screen
             button.update(SCREEN)
         
         for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F11:
+                    fullscreen()
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
@@ -351,6 +354,22 @@ def grid_resize():
         pygame.display.update()
 
 ##
+## Toggle fullscreen on game window
+##
+        
+def fullscreen():
+    global WIDTH, HEIGHT, SCREEN, width_temp, height_temp
+    if bool(SCREEN.get_flags() & pygame.FULLSCREEN): # Check if FULLSCREEN flag is activated
+        SCREEN = pygame.display.set_mode((width_temp, height_temp)) # Returns window size to original
+        WIDTH, HEIGHT = width_temp, height_temp
+        draw_grid()
+    else:
+        width_temp, height_temp = WIDTH, HEIGHT
+        SCREEN = pygame.display.set_mode((0, 0), pygame.FULLSCREEN) # Enables FULLSCREEN flag
+        WIDTH, HEIGHT = pygame.display.get_surface().get_size()
+        draw_grid()
+    
+##
 ## Draw the color menu
 ##
 
@@ -406,6 +425,8 @@ def play():
 
             # Key pressed
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_F11:                              # F11:         toggle fullscreen
+                    fullscreen()
                 if game_on:
                     if event.key == pygame.K_DOWN  and snake.ymov == 0:    # Down arrow:  move down
                         snake.ymov = 1
