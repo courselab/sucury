@@ -221,7 +221,7 @@ class Snake:
             self.should_grow = False
 
             # Drop and apple
-            apple = Apple()
+            apple = Apple(self)
 
 
         # Move the snake.
@@ -248,11 +248,25 @@ class Snake:
         self.should_grow = True
 
 class Apple:
-    def __init__(self):
+    def __init__(self, snake):
 
         # Pick a random position within the game SCREEN
         self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
         self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+
+        while True: # Keep generating until it's a  valid position
+
+            if (self.x,self.y) == (snake.head.x,snake.head.y): # If it's on top of snake head
+                self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
+                self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+                continue
+            for segment in snake.tail: # check if it's on top of snake body
+                if (self.x,self.y) == (segment.x,segment.y): 
+                    self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
+                    self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+                    break
+            else:
+                break
 
         # Create an apple at that location
         self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
@@ -383,7 +397,7 @@ def play():
 
     snake = Snake()    # The snake
 
-    apple = Apple()    # An apple
+    apple = Apple(snake)    # An apple
 
     best_score_num = 0 # Best score in the run
 
@@ -462,7 +476,7 @@ def play():
         # If the head pass over an apple, lengthen the snake and drop another apple
         if snake.head.x == apple.x and snake.head.y == apple.y:
             snake.grow()
-            apple = Apple()
+            apple = Apple(snake)
 
 
         if show_color_menu:
