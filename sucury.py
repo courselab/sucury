@@ -178,6 +178,9 @@ class Snake:
         self.head_color = HEAD_COLOR
         self.tail_color = TAIL_COLOR
 
+        # initialize the movement queue
+        self.movement_queue = []
+        
     # This function is called at each loop interation.
 
     def update(self):
@@ -225,6 +228,11 @@ class Snake:
 
 
         # Move the snake.
+        
+        # Check if the movement queue is not empty
+        if self.movement_queue:
+            # Update direction based on the queue
+            self.xmov, self.ymov = self.movement_queue.pop(0)
 
         # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
         if (self.xmov or self.ymov):
@@ -243,6 +251,13 @@ class Snake:
             self.head.y += self.ymov * GRID_SIZE
 
     # Sets that the snake should grow on the next update.
+
+    def update_direction(self, new_direction):
+        # Add new direction to the queue
+        self.movement_queue.append(new_direction)
+        # Limit the size of the queue to prevent too much lag
+        if len(self.movement_queue) > 2:
+            self.movement_queue = self.movement_queue[-2:]
 
     def grow(self):
         self.should_grow = True
@@ -421,18 +436,19 @@ def play():
             # Key pressed
             if event.type == pygame.KEYDOWN:
                 if game_on:
-                    if event.key == pygame.K_DOWN  and snake.ymov == 0:    # Down arrow:  move down
-                        snake.ymov = 1
-                        snake.xmov = 0
-                    elif event.key == pygame.K_UP  and snake.ymov == 0:    # Up arrow:    move up
-                        snake.ymov = -1
-                        snake.xmov = 0
+                    new_direction = None
+                    if event.key == pygame.K_DOWN and snake.ymov == 0:  # Down arrow: move down
+                        new_direction = (0, 1)
+                    elif event.key == pygame.K_UP and snake.ymov == 0:  # Up arrow: move up
+                        new_direction = (0, -1)
                     elif event.key == pygame.K_RIGHT and snake.xmov == 0: # Right arrow: move right
-                        snake.ymov = 0
-                        snake.xmov = 1
-                    elif event.key == pygame.K_LEFT and snake.xmov == 0:  # Left arrow:  move left
-                        snake.ymov = 0
-                        snake.xmov = -1
+                        new_direction = (1, 0)
+                    elif event.key == pygame.K_LEFT and snake.xmov == 0:  # Left arrow: move left
+                        new_direction = (-1, 0)
+
+                    if new_direction:
+                        # Update the queue with new direction
+                        snake.update_direction(new_direction)  
                     
                 if event.key == pygame.K_q:     # Q         : quit game
                     main_menu()
