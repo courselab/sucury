@@ -68,46 +68,67 @@ COLOR_MENU_FONT = pygame.font.Font("assets/font/GochiHand.ttf", int(WIDTH/20))
 pygame.display.set_caption(WINDOW_TITLE[0])
 BG = pygame.image.load("assets/Background.jpg")
 
-def main_menu(): #Main Menu Screen
+def main_menu():  # Main Menu Screen
     pygame.display.set_caption(WINDOW_TITLE[1])
+    menu_option = 0  # 0: Play, 1: Options, 2: Quit
+
+    PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(WIDTH/2, HEIGHT/2.5),
+                         text_input="PLAY", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+    OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(WIDTH/2, HEIGHT/1.8),
+                            text_input="OPTIONS", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+    QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(WIDTH/2, HEIGHT/1.4),
+                         text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+    buttons = [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]
 
     while True:
         SCREEN.blit(BG, (0, 0))
         MENU_MOUSE_POS = pygame.mouse.get_pos()
-        
+
         MENU_TEXT = BIG_FONT.render("MENU", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(WIDTH/2, HEIGHT/5))
-
-        
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(WIDTH/2, HEIGHT/2.5), 
-                            text_input="PLAY", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-        
-        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(WIDTH/2, HEIGHT/1.8), 
-                            text_input="OPTIONS", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-        
-        QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(WIDTH/2, HEIGHT/1.4), 
-                            text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-        
         SCREEN.blit(MENU_TEXT, MENU_RECT)
 
-        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
-            button.changeColor(MENU_MOUSE_POS)
+        for i, button in enumerate(buttons):
+            if i == menu_option:
+                button.text = button.font.render(button.text_input, True, button.hovering_color)
+            else:
+                button.text = button.font.render(button.text_input, True, button.base_color)
+
+            if button.checkForInput(MENU_MOUSE_POS):
+                menu_option = i  # Update selection to hovered item
+
             button.update(SCREEN)
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    play()
-                if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    options()
-                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    pygame.quit()
-                    sys.exit()
-                    
+                if buttons[menu_option].checkForInput(MENU_MOUSE_POS):
+                    if menu_option == 0:
+                        play()
+                    elif menu_option == 1:
+                        options()
+                    elif menu_option == 2:
+                        pygame.quit()
+                        sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    menu_option = (menu_option - 1) % 3
+                elif event.key == pygame.K_DOWN:
+                    menu_option = (menu_option + 1) % 3
+                elif event.key == pygame.K_RETURN:  # Enter key
+                    if menu_option == 0:
+                        play()
+                    elif menu_option == 1:
+                        options()
+                    elif menu_option == 2:
+                        pygame.quit()
+                        sys.exit()
+
         pygame.display.update()
+
 
 def options():
     return
