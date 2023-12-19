@@ -13,3 +13,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Best Score
 - Change snake color pressing 'C'
 - Better movement
+- Add Keyboard support to main menu
