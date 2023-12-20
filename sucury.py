@@ -70,49 +70,55 @@ COLOR_MENU_FONT = pygame.font.Font("assets/font/GochiHand.ttf", int(WIDTH/20))
 pygame.display.set_caption(WINDOW_TITLE[0])
 BG = pygame.image.load("assets/Background.jpg")
 
-def main_menu(): #Main Menu Screen
+def main_menu():  # Main Menu Screen
     pygame.display.set_caption(WINDOW_TITLE[1])
+    menu_option = 0  # 0: Play, 1: Quit
+
+    PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(WIDTH/2, HEIGHT/2.5),
+                         text_input="PLAY", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+    QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(WIDTH/2, HEIGHT/1.8),
+                         text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
+
+    buttons = [PLAY_BUTTON, QUIT_BUTTON]
 
     while True:
         SCREEN.blit(BG, (0, 0))
         MENU_MOUSE_POS = pygame.mouse.get_pos()
-        
+
         MENU_TEXT = BIG_FONT.render("MENU", True, "#b68f40")
         MENU_RECT = MENU_TEXT.get_rect(center=(WIDTH/2, HEIGHT/5))
-
-        
-        PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(WIDTH/2, HEIGHT/2.5), 
-                            text_input="PLAY", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-        
-        OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(WIDTH/2, HEIGHT/1.8), 
-                            text_input="OPTIONS", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-        
-        QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(WIDTH/2, HEIGHT/1.4), 
-                            text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-        
         SCREEN.blit(MENU_TEXT, MENU_RECT)
 
-        for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
-            button.changeColor(MENU_MOUSE_POS)
+        for i, button in enumerate(buttons):
+            if i == menu_option:
+                button.text = button.font.render(button.text_input, True, button.hovering_color)
+            else:
+                button.text = button.font.render(button.text_input, True, button.base_color)
+
             button.update(SCREEN)
-        
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key in CLOSING_KEYS):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    play()
-                if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    options()
-                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    pygame.quit()
-                    sys.exit()
-                    
-        pygame.display.update()
+                if buttons[menu_option].checkForInput(MENU_MOUSE_POS):
+                    if menu_option == 0:
+                        play()
+                    elif menu_option == 1:
+                        pygame.quit()
+                        sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    menu_option = 1 - menu_option  # Toggle between 0 and 1
+                elif event.key == pygame.K_RETURN:  # Enter key
+                    if menu_option == 0:
+                        play()
+                    elif menu_option == 1:
+                        pygame.quit()
+                        sys.exit()
 
-def options():
-    return
+        pygame.display.update()
 
 ## This function is called when the snake dies.
 
@@ -180,6 +186,9 @@ class Snake:
         self.head_color = HEAD_COLOR
         self.tail_color = TAIL_COLOR
 
+        # initialize the movement queue
+        self.movement_queue = []
+        
     # This function is called at each loop interation.
 
     def update(self):
@@ -223,10 +232,15 @@ class Snake:
             self.should_grow = False
 
             # Drop and apple
-            apple = Apple()
+            apple = Apple(self)
 
 
         # Move the snake.
+        
+        # Check if the movement queue is not empty
+        if self.movement_queue:
+            # Update direction based on the queue
+            self.xmov, self.ymov = self.movement_queue.pop(0)
 
         # If head hasn't moved, tail shouldn't either (otherwise, self-byte).
         if (self.xmov or self.ymov):
@@ -246,15 +260,36 @@ class Snake:
 
     # Sets that the snake should grow on the next update.
 
+    def update_direction(self, new_direction):
+        # Add new direction to the queue
+        self.movement_queue.append(new_direction)
+        # Limit the size of the queue to prevent too much lag
+        if len(self.movement_queue) > 2:
+            self.movement_queue = self.movement_queue[-2:]
+
     def grow(self):
         self.should_grow = True
 
 class Apple:
-    def __init__(self):
+    def __init__(self, snake):
 
         # Pick a random position within the game SCREEN
         self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
         self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+
+        while True: # Keep generating until it's a  valid position
+
+            if (self.x,self.y) == (snake.head.x,snake.head.y): # If it's on top of snake head
+                self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
+                self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+                continue
+            for segment in snake.tail: # check if it's on top of snake body
+                if (self.x,self.y) == (segment.x,segment.y): 
+                    self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
+                    self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+                    break
+            else:
+                break
 
         # Create an apple at that location
         self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
@@ -385,7 +420,7 @@ def play():
 
     snake = Snake()    # The snake
 
-    apple = Apple()    # An apple
+    apple = Apple(snake)    # An apple
 
     best_score_num = 0 # Best score in the run
 
@@ -409,18 +444,23 @@ def play():
             # Key pressed
             if event.type == pygame.KEYDOWN:
                 if game_on:
-                    if event.key == pygame.K_DOWN  and snake.ymov == 0:    # Down arrow:  move down
-                        snake.ymov = 1
-                        snake.xmov = 0
-                    elif event.key == pygame.K_UP  and snake.ymov == 0:    # Up arrow:    move up
-                        snake.ymov = -1
-                        snake.xmov = 0
-                    elif event.key == pygame.K_RIGHT and snake.xmov == 0: # Right arrow: move right
-                        snake.ymov = 0
-                        snake.xmov = 1
-                    elif event.key == pygame.K_LEFT and snake.xmov == 0:  # Left arrow:  move left
-                        snake.ymov = 0
-                        snake.xmov = -1
+                    new_direction = None
+                    # If player presses S o DOWN_ARROW, moves down
+                    if event.key == pygame.K_DOWN or event.key == pygame.K_s and snake.ymov == 0:  # Down arrow: move down
+                        new_direction = (0, 1)
+                    # If player presses W o UP_ARROW, moves up
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w and snake.ymov == 0:  # Up arrow: move up
+                        new_direction = (0, -1)
+                    # If player presses D o RIGHT_ARROW, moves right
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d and snake.xmov == 0: # Right arrow: move right
+                        new_direction = (1, 0)
+                    # If player presses A o LEFT_ARROW, moves left
+                    elif event.key == pygame.K_LEFT or event.key == pygame.K_a and snake.xmov == 0:  # Left arrow: move left
+                        new_direction = (-1, 0)
+
+                    if new_direction:
+                        # Update the queue with new direction
+                        snake.update_direction(new_direction)  
                     
                 if event.key in CLOSING_KEYS:     # [CLOSING_KEYS]         : quit game
                     main_menu()
@@ -464,7 +504,7 @@ def play():
         # If the head pass over an apple, lengthen the snake and drop another apple
         if snake.head.x == apple.x and snake.head.y == apple.y:
             snake.grow()
-            apple = Apple()
+            apple = Apple(snake)
 
 
         if show_color_menu:
