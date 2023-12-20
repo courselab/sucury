@@ -97,7 +97,7 @@ def center_prompt(title, subtitle):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-    if event.key == pygame.K_q:          # 'Q' quits game
+    if event.key in [ pygame.K_q, pygame.K_ESCAPE, pygame.K_END ]:          # 'Q' quits game
         pygame.quit()
         sys.exit()
 
