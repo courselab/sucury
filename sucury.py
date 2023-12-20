@@ -70,16 +70,14 @@ BG = pygame.image.load("assets/Background.jpg")
 
 def main_menu():  # Main Menu Screen
     pygame.display.set_caption(WINDOW_TITLE[1])
-    menu_option = 0  # 0: Play, 1: Options, 2: Quit
+    menu_option = 0  # 0: Play, 1: Quit
 
     PLAY_BUTTON = Button(image=pygame.image.load("assets/Play Rect.png"), pos=(WIDTH/2, HEIGHT/2.5),
                          text_input="PLAY", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-    OPTIONS_BUTTON = Button(image=pygame.image.load("assets/Options Rect.png"), pos=(WIDTH/2, HEIGHT/1.8),
-                            text_input="OPTIONS", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
-    QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(WIDTH/2, HEIGHT/1.4),
+    QUIT_BUTTON = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(WIDTH/2, HEIGHT/1.8),
                          text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
 
-    buttons = [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]
+    buttons = [PLAY_BUTTON, QUIT_BUTTON]
 
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -95,9 +93,6 @@ def main_menu():  # Main Menu Screen
             else:
                 button.text = button.font.render(button.text_input, True, button.base_color)
 
-            if button.checkForInput(MENU_MOUSE_POS):
-                menu_option = i  # Update selection to hovered item
-
             button.update(SCREEN)
 
         for event in pygame.event.get():
@@ -109,29 +104,19 @@ def main_menu():  # Main Menu Screen
                     if menu_option == 0:
                         play()
                     elif menu_option == 1:
-                        options()
-                    elif menu_option == 2:
                         pygame.quit()
                         sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    menu_option = (menu_option - 1) % 3
-                elif event.key == pygame.K_DOWN:
-                    menu_option = (menu_option + 1) % 3
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    menu_option = 1 - menu_option  # Toggle between 0 and 1
                 elif event.key == pygame.K_RETURN:  # Enter key
                     if menu_option == 0:
                         play()
                     elif menu_option == 1:
-                        options()
-                    elif menu_option == 2:
                         pygame.quit()
                         sys.exit()
 
         pygame.display.update()
-
-
-def options():
-    return
 
 ## This function is called when the snake dies.
 
