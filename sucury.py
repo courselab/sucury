@@ -35,6 +35,11 @@ WIDTH, HEIGHT = 800, 800     # Game screen dimensions.
 
 GRID_SIZE = 50               # Square grid size.
 
+APPLE     = 0  # Apple is the default fruit (type 0)
+PEAR      = 1  # Pear is fruit type 1
+BLUEBERRY = 2  # Blueberry is fruit type 2
+ORANGE    = 3  # Orange is fruit type 3
+
 HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
 DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
 TAIL_COLOR      = "#00ff00"  # Color of the snake's tail.
@@ -177,16 +182,21 @@ class Snake:
 ##
 
 class Fruit:
-    def __init__(self):
 
-        # Pick a random position within the game arena
-        self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
-        self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+    def __init__(self, snake):
+        self.rect = pygame.Rect(0, 0, GRID_SIZE, GRID_SIZE)
+        self.place_fruit(snake)
 
-        # Create an fruit at that location
-        self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
+    def place_fruit(self, snake):
+        while True:
+            # Randomly select a position within the game screen boundaries
+            self.x = random.randint(0, (WIDTH - GRID_SIZE) // GRID_SIZE) * GRID_SIZE
+            self.y = random.randint(0, (HEIGHT - GRID_SIZE) // GRID_SIZE) * GRID_SIZE
+            self.rect.topleft = (self.x, self.y)
+            # Check if the position overlaps with the snake
+            if self.rect.collidelist([snake.head] + snake.tail) == -1:
+                break  # The position is valid, exit the loop
 
-        self.type = random.randint(0, 3)
 
     # This function is called each interation of the game loop
 
@@ -194,22 +204,21 @@ class Fruit:
 
         # Drop the fruit
         # Apple maintains snake's speed
-        if self.type == 0:
+        if self.type == APPLE:
             pygame.draw.rect(arena, APPLE_COLOR, self.rect)
 
         # Pear increases snake's speed
-        elif self.type == 1:
+        elif self.type == PEAR:
             pygame.draw.rect(arena, PEAR_COLOR, self.rect)
 
         # Blueberry decreases snake's speed
-        elif self.type == 2:
+        elif self.type == BLUEBERRY:
             pygame.draw.rect(arena, BLUEBERRY_COLOR, self.rect)
 
         # Orange makes snake grow 2 segments
-        elif self.type == 3:
+        elif self.type == ORANGE:
             pygame.draw.rect(arena, ORANGE_COLOR, self.rect)
 
-        print(self.type, CLOCK_TICKS)
 ##
 ## Draw the arena
 ##
