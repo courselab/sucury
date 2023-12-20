@@ -311,16 +311,16 @@ class Fruit:
 
         # Drop the fruit
         if self.type == APPLE:
-            pygame.draw.rect(arena, APPLE_COLOR, self.rect)
+            pygame.draw.rect(SCREEN, APPLE_COLOR, self.rect)
 
         elif self.type == PEAR:
-            pygame.draw.rect(arena, PEAR_COLOR, self.rect)
+            pygame.draw.rect(SCREEN, PEAR_COLOR, self.rect)
           
         elif self.type == BLUEBERRY:
-            pygame.draw.rect(arena, BLUEBERRY_COLOR, self.rect)
+            pygame.draw.rect(SCREEN, BLUEBERRY_COLOR, self.rect)
 
         elif self.type == ORANGE:
-            pygame.draw.rect(arena, ORANGE_COLOR, self.rect)
+            pygame.draw.rect(SCREEN, ORANGE_COLOR, self.rect)
 
 ##
 ## The color picker class.
