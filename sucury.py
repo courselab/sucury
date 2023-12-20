@@ -239,7 +239,7 @@ class Snake:
             self.should_grow = False
 
             # Drop a fruit
-            fruit = Fruit()
+            fruit = Fruit(self)
 
 
 
@@ -428,7 +428,7 @@ def draw_color_menu(menu_text, color_picker, center):
 ##
 ## Main loop
 ##
-def play():
+def play(CLOCK_TICKS=7):
     game_on = 1
     show_color_menu = False
 
