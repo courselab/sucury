@@ -11,3 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial code
 
+## [1.1.0] - 2023-12-20
+
+### Added
+
+- Best Score
+- Change snake color pressing 'C'
+- Better movement
+- Add Keyboard support to main menu
+- Control with 'WASD'

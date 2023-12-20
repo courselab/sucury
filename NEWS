@@ -6,4 +6,10 @@
 
    Development has started.
 
+ * 2023-20-12 - Release 1.1.0
+
+   Improve snake movement
+   Add snake customization when pressing 'C'
+   Add best score
+
    
