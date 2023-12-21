@@ -36,10 +36,18 @@ WIDTH, HEIGHT = 650, 650     # Game screen dimensions.
 
 GRID_SIZE = 50               # Square grid size.
 
+APPLE     = 0  # Apple is the default fruit (type 0)
+PEAR      = 1  # Pear is fruit type 1
+BLUEBERRY = 2  # Blueberry is fruit type 2
+ORANGE    = 3  # Orange is fruit type 3
+
 HEAD_COLOR      = "#00aa00"  # Color of the snake's head.
 DEAD_HEAD_COLOR = "#4b0082"  # Color of the dead snake's head.
 TAIL_COLOR      = "#00ff00"  # Color of the snake's tail.
 APPLE_COLOR     = "#aa0000"  # Color of the apple.
+PEAR_COLOR      = "#91aa00"  # Color of the pear.
+BLUEBERRY_COLOR = "#000eaa"  # Color of the blueberry.
+ORANGE_COLOR    = "#cc6f04"  # Color of the orange.
 SCREEN_COLOR    = "#202020"  # Color of the ground.
 GRID_COLOR      = "#3c3c3b"  # Color of the grid lines.
 SCORE_COLOR     = "#ffffff"  # Color of the scoreboard.
@@ -70,7 +78,16 @@ COLOR_MENU_FONT = pygame.font.Font("assets/font/GochiHand.ttf", int(WIDTH/20))
 pygame.display.set_caption(WINDOW_TITLE[0])
 BG = pygame.image.load("assets/Background.jpg")
 
+MUSIC_ON = True
+MUSIC_FILES = {
+    'MENU': 'assets/music/menu.mp3',
+    'GAMEPLAY': 'assets/music/gameplay.mp3',
+}
+MUTE_KEY = pygame.K_m
+
 def main_menu():  # Main Menu Screen
+    global MUSIC_ON
+
     pygame.display.set_caption(WINDOW_TITLE[1])
     menu_option = 0  # 0: Play, 1: Quit
 
@@ -80,6 +97,9 @@ def main_menu():  # Main Menu Screen
                          text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
 
     buttons = [PLAY_BUTTON, QUIT_BUTTON]
+
+    pygame.mixer_music.load(MUSIC_FILES['MENU'])
+    pygame.mixer_music.play(loops=-1)
 
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -111,6 +131,12 @@ def main_menu():  # Main Menu Screen
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     menu_option = 1 - menu_option  # Toggle between 0 and 1
+                elif event.key == MUTE_KEY:  # Mute key [m]
+                    if MUSIC_ON:
+                        pygame.mixer_music.stop()
+                    else:
+                        pygame.mixer_music.play()
+                    MUSIC_ON = not MUSIC_ON
                 elif event.key == pygame.K_RETURN:  # Enter key
                     if menu_option == 0:
                         play()
@@ -136,7 +162,7 @@ def center_prompt(title, subtitle):
 
     pygame.display.update()
 
-   # Wait for a keypres or a game quit event.
+   # Wait for a keypress or a game quit event.
 
     while ( event := pygame.event.wait() ):
         if event.type == pygame.KEYDOWN:
@@ -192,7 +218,7 @@ class Snake:
     # This function is called at each loop interation.
 
     def update(self):
-        global apple
+        global fruit
 
         # Check for border crash.
         if self.head.x not in range(0, WIDTH) or self.head.y not in range(0, HEIGHT):
@@ -208,6 +234,7 @@ class Snake:
 
             # Tell the bad news
             pygame.draw.rect(SCREEN, DEAD_HEAD_COLOR, self.head)
+
             center_prompt("Game Over", "Press to restart")
 
             # Respan the head
@@ -231,8 +258,9 @@ class Snake:
             self.alive = True
             self.should_grow = False
 
-            # Drop and apple
-            apple = Apple(self)
+            # Drop a fruit
+            fruit = Fruit(self)
+
 
 
         # Move the snake.
@@ -258,8 +286,8 @@ class Snake:
             self.head.x += self.xmov * GRID_SIZE
             self.head.y += self.ymov * GRID_SIZE
 
-    # Sets that the snake should grow on the next update.
-
+            
+  # Sets that the snake should grow on the next update.
     def update_direction(self, new_direction):
         # Add new direction to the queue
         self.movement_queue.append(new_direction)
@@ -270,14 +298,19 @@ class Snake:
     def grow(self):
         self.should_grow = True
 
-class Apple:
-    def __init__(self, snake):
+##
+## The fruit class.
+##
 
+class Fruit:
+
+    def __init__(self, snake):
         # Pick a random position within the game SCREEN
         self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
         self.y = int(random.randint(0, HEIGHT)/GRID_SIZE) * GRID_SIZE
+        self.type = random.randint(0, 3)
 
-        while True: # Keep generating until it's a  valid position
+        while True: # Keep generating until it's a valid position
 
             if (self.x,self.y) == (snake.head.x,snake.head.y): # If it's on top of snake head
                 self.x = int(random.randint(0, WIDTH)/GRID_SIZE) * GRID_SIZE
@@ -291,15 +324,23 @@ class Apple:
             else:
                 break
 
-        # Create an apple at that location
+        # Create a fruit at that location
         self.rect = pygame.Rect(self.x, self.y, GRID_SIZE, GRID_SIZE)
 
-    # This function is called each interation of the game loop
+    def update(self, CLOCK_TICKS=6):
 
-    def update(self):
+        # Drop the fruit
+        if self.type == APPLE:
+            pygame.draw.rect(SCREEN, APPLE_COLOR, self.rect)
 
-        # Drop the apple
-        pygame.draw.rect(SCREEN, APPLE_COLOR, self.rect)
+        elif self.type == PEAR:
+            pygame.draw.rect(SCREEN, PEAR_COLOR, self.rect)
+          
+        elif self.type == BLUEBERRY:
+            pygame.draw.rect(SCREEN, BLUEBERRY_COLOR, self.rect)
+
+        elif self.type == ORANGE:
+            pygame.draw.rect(SCREEN, ORANGE_COLOR, self.rect)
 
 ##
 ## The color picker class.
@@ -335,7 +376,6 @@ class ColorPicker:
         surf.blit(self.image, self.rect)
         center = self.rect.left + self.rad + self.pos * self.pwidth, self.rect.centery
         pygame.draw.circle(surf, self.get_color(), center, self.rect.height // 4)
-
 
 ##
 ## Draw the SCREEN
@@ -375,6 +415,7 @@ def grid_resize():
             pygame.quit()
             sys.exit()
 
+
         grid_size_text = SMALL_FONT.render(f"Grid Size Up Down: {grid_size}", True, MESSAGE_COLOR)
         SCREEN.fill(SCREEN_COLOR)
 
@@ -407,7 +448,14 @@ def draw_color_menu(menu_text, color_picker, center):
 ##
 ## Main loop
 ##
-def play():
+def play(CLOCK_TICKS=7):
+    global MUSIC_ON
+
+    pygame.mixer_music.load(MUSIC_FILES['GAMEPLAY'])
+
+    if MUSIC_ON:
+        pygame.mixer_music.play(loops=-1)
+
     game_on = 1
     show_color_menu = False
 
@@ -420,7 +468,7 @@ def play():
 
     snake = Snake()    # The snake
 
-    apple = Apple(snake)    # An apple
+    fruit = Fruit(snake)    # A fruit
 
     best_score_num = 0 # Best score in the run
 
@@ -457,6 +505,12 @@ def play():
                     # If player presses A o LEFT_ARROW, moves left
                     elif event.key == pygame.K_LEFT or event.key == pygame.K_a and snake.xmov == 0:  # Left arrow: move left
                         new_direction = (-1, 0)
+                    elif event.key == MUTE_KEY:  # If player presses the mute key [m]
+                        if MUSIC_ON:
+                            pygame.mixer_music.stop()
+                        else:
+                            pygame.mixer_music.play()
+                        MUSIC_ON = not MUSIC_ON
 
                     if new_direction:
                         # Update the queue with new direction
@@ -471,6 +525,7 @@ def play():
                     show_color_menu = not show_color_menu
                     game_on = False if show_color_menu else True
 
+
         ## Update the game
 
         if game_on:
@@ -484,7 +539,7 @@ def play():
             SCREEN.fill(SCREEN_COLOR)
             draw_grid()
 
-            apple.update()
+            fruit.update()
 
         # Draw the tail
         for square in snake.tail:
@@ -493,6 +548,7 @@ def play():
         # Draw head
         pygame.draw.rect(SCREEN, snake.head_color, snake.head)
 
+        # Show score (snake length = head + tail)
         score = BIG_FONT.render(f"{len(snake.tail)}", True, SCORE_COLOR)
         SCREEN.blit(score, score_rect)
         
@@ -501,10 +557,21 @@ def play():
         SCREEN.blit(best_score, best_score_rect)
 
 
-        # If the head pass over an apple, lengthen the snake and drop another apple
-        if snake.head.x == apple.x and snake.head.y == apple.y:
+        # If the head pass over a fruit, lengthen the snake and drop another fruit
+        if snake.head.x == fruit.x and snake.head.y == fruit.y:
             snake.grow()
-            apple = Apple(snake)
+            
+            # Pear makes snake faster
+            if fruit.type == PEAR:
+                CLOCK_TICKS += 1 if CLOCK_TICKS < 12 else 0
+            # Blueberry makes snake slower
+            elif fruit.type == BLUEBERRY:
+                CLOCK_TICKS -= 1 if CLOCK_TICKS > 2 else 0
+            # Orange increases snake length by 2 instead of 1
+            elif fruit.type == ORANGE:
+                snake.grow()
+                
+            fruit = Fruit(snake)
 
 
         if show_color_menu:
@@ -513,7 +580,6 @@ def play():
 
             draw_color_menu("TAIL COLOR", tail_color_picker, (WIDTH/2, HEIGHT/1.7 - 60))
             snake.tail_color = tail_color_picker.get_color()
-
 
 
         # Update display and move clock.
