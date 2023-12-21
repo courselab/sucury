@@ -59,6 +59,8 @@ CLOCK_TICKS     = 7         # How fast the snake moves.
 
 START_POS_PADDING = 3       # Size of padding so that the snake does not start to close to the border.
 
+CLOSING_KEYS = [ pygame.K_q, pygame.K_END, pygame.K_ESCAPE ]
+
 ##
 ## Game implementation.
 ##
@@ -116,7 +118,7 @@ def main_menu():  # Main Menu Screen
             button.update(SCREEN)
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key in CLOSING_KEYS):
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -168,7 +170,7 @@ def center_prompt(title, subtitle):
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-    if event.key == pygame.K_q:          # 'Q' quits game
+    if event.key in CLOSING_KEYS:          # 'Q' quits game
         main_menu()
 
 class Snake:
@@ -514,7 +516,7 @@ def play(CLOCK_TICKS=7):
                         # Update the queue with new direction
                         snake.update_direction(new_direction)  
                     
-                if event.key == pygame.K_q:     # Q         : quit game
+                if event.key in CLOSING_KEYS:     # [CLOSING_KEYS]         : quit game
                     main_menu()
                 elif event.key == pygame.K_p:     # S         : pause game
                     game_on = not game_on
