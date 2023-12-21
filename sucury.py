@@ -76,7 +76,16 @@ COLOR_MENU_FONT = pygame.font.Font("assets/font/GochiHand.ttf", int(WIDTH/20))
 pygame.display.set_caption(WINDOW_TITLE[0])
 BG = pygame.image.load("assets/Background.jpg")
 
+MUSIC_ON = True
+MUSIC_FILES = {
+    'MENU': 'assets/music/menu.mp3',
+    'GAMEPLAY': 'assets/music/gameplay.mp3',
+}
+MUTE_KEY = pygame.K_m
+
 def main_menu():  # Main Menu Screen
+    global MUSIC_ON
+
     pygame.display.set_caption(WINDOW_TITLE[1])
     menu_option = 0  # 0: Play, 1: Quit
 
@@ -86,6 +95,9 @@ def main_menu():  # Main Menu Screen
                          text_input="QUIT", font=SMALL_FONT, base_color="#d7fcd4", hovering_color="White")
 
     buttons = [PLAY_BUTTON, QUIT_BUTTON]
+
+    pygame.mixer_music.load(MUSIC_FILES['MENU'])
+    pygame.mixer_music.play(loops=-1)
 
     while True:
         SCREEN.blit(BG, (0, 0))
@@ -117,6 +129,12 @@ def main_menu():  # Main Menu Screen
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     menu_option = 1 - menu_option  # Toggle between 0 and 1
+                elif event.key == MUTE_KEY:  # Mute key [m]
+                    if MUSIC_ON:
+                        pygame.mixer_music.stop()
+                    else:
+                        pygame.mixer_music.play()
+                    MUSIC_ON = not MUSIC_ON
                 elif event.key == pygame.K_RETURN:  # Enter key
                     if menu_option == 0:
                         play()
@@ -429,6 +447,13 @@ def draw_color_menu(menu_text, color_picker, center):
 ## Main loop
 ##
 def play(CLOCK_TICKS=7):
+    global MUSIC_ON
+
+    pygame.mixer_music.load(MUSIC_FILES['GAMEPLAY'])
+
+    if MUSIC_ON:
+        pygame.mixer_music.play(loops=-1)
+
     game_on = 1
     show_color_menu = False
 
@@ -478,6 +503,12 @@ def play(CLOCK_TICKS=7):
                     # If player presses A o LEFT_ARROW, moves left
                     elif event.key == pygame.K_LEFT or event.key == pygame.K_a and snake.xmov == 0:  # Left arrow: move left
                         new_direction = (-1, 0)
+                    elif event.key == MUTE_KEY:  # Mute key [m]
+                        if MUSIC_ON:
+                            pygame.mixer_music.stop()
+                        else:
+                            pygame.mixer_music.play()
+                        MUSIC_ON = not MUSIC_ON
 
                     if new_direction:
                         # Update the queue with new direction
