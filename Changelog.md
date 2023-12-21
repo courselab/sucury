@@ -21,3 +21,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Keyboard support to main menu
 - Control with 'WASD'
 - 3 different types of fruit with power-ups
+- Original soundtrack
+- New controls
