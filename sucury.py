@@ -503,7 +503,7 @@ def play(CLOCK_TICKS=7):
                     # If player presses A o LEFT_ARROW, moves left
                     elif event.key == pygame.K_LEFT or event.key == pygame.K_a and snake.xmov == 0:  # Left arrow: move left
                         new_direction = (-1, 0)
-                    elif event.key == MUTE_KEY:  # Mute key [m]
+                    elif event.key == MUTE_KEY:  # If player presses the mute key [m]
                         if MUSIC_ON:
                             pygame.mixer_music.stop()
                         else:
